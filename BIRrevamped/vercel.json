@@ -8,18 +8,5 @@
   ],
   "routes": [
     { "src": "/(.*)", "dest": "/$1" }
-  ],
-  "framework": "other",
-  "outputDirectory": "."
-}
-{
-  "buildCommand": "npm run build",
-  "outputDirectory": ".",
-  "framework": "static",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/$1"
-    }
   ]
 }
