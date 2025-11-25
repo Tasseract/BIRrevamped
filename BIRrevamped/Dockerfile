@@ -3,15 +3,15 @@ FROM node:18-alpine
 # Create app directory
 WORKDIR /usr/src/app
 
-# Install app dependencies
+# Install app dependencies (skip postinstall script for now)
 COPY package*.json ./
-RUN npm ci --production || npm install --production
+RUN npm ci --ignore-scripts || npm install --ignore-scripts
 
-# Copy source
+# Copy source and schema BEFORE generating
 COPY . .
 
-# Generate Prisma client (optional; migrations will regenerate if needed)
-RUN npx prisma generate 2>/dev/null || true
+# Now generate Prisma client (schema is present)
+RUN npx prisma generate
 
 EXPOSE 3000
 
