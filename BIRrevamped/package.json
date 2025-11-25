@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prisma": "dotenv -- prisma",
     "start": "node server.js",
-    "postinstall": "npx prisma generate || true"
+    "postinstall": "if [ -z \"$VERCEL\" ]; then npx prisma generate || true; fi"
     ,"generate-api-config": "node scripts/generate-api-config.js",
     "build": "node scripts/generate-api-config.js"
   },
