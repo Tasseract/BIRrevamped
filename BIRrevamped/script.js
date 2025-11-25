@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Form data collected:', formData);
 
             try {
-                const response = await fetch('http://localhost:3000/signup', {
+                const response = await fetch(`${API_BASE}/signup`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData),
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Sending login data:', formData);
 
             try {
-                const response = await fetch('http://localhost:3000/login', {
+                const response = await fetch(`${API_BASE}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData),
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             try {
-                const res = await fetch('http://localhost:3000/business/register', {
+                const res = await fetch(`${API_BASE}/business/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Simulation and transaction server communication functions
 async function saveSimulationToServer(sim) {
   // sim: { title, form, data, amount, userId, businessId? }
-  const res = await fetch('http://localhost:3000/api/simulations', {
+    const res = await fetch(`${API_BASE}/api/simulations`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(sim),
@@ -198,7 +198,7 @@ async function saveSimulationToServer(sim) {
 }
 
 async function loadSimulationsFromServer(userId) {
-  const url = new URL('http://localhost:3000/api/simulations');
+    const url = new URL(`${API_BASE}/api/simulations`);
   if (userId) url.searchParams.set('userId', userId);
   const res = await fetch(url.toString());
   if (!res.ok) throw new Error('Failed to load simulations');
@@ -206,7 +206,7 @@ async function loadSimulationsFromServer(userId) {
 }
 
 async function updateSimulationOnServer(id, updates) {
-  const res = await fetch(`http://localhost:3000/api/simulations/${id}`, {
+    const res = await fetch(`${API_BASE}/api/simulations/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updates),
@@ -216,7 +216,7 @@ async function updateSimulationOnServer(id, updates) {
 }
 
 async function createTransactionOnServer({ userId, items, total }) {
-  const res = await fetch('http://localhost:3000/api/transactions', {
+    const res = await fetch(`${API_BASE}/api/transactions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ userId, items, total }),
@@ -229,7 +229,7 @@ async function createTransactionOnServer({ userId, items, total }) {
 }
 
 async function loadTransactionsFromServer(userId) {
-  const url = new URL('http://localhost:3000/api/transactions');
+    const url = new URL(`${API_BASE}/api/transactions`);
   if (userId) url.searchParams.set('userId', userId);
   const res = await fetch(url.toString());
   if (!res.ok) throw new Error('Failed to load transactions');
