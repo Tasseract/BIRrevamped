@@ -10,8 +10,8 @@ RUN npm ci --production || npm install --production
 # Copy source
 COPY . .
 
-# Generate Prisma client (requires DATABASE_URL at build if using prisma introspection migrations)
-RUN npx prisma generate || true
+# Generate Prisma client (optional; migrations will regenerate if needed)
+RUN npx prisma generate 2>/dev/null || true
 
 EXPOSE 3000
 
