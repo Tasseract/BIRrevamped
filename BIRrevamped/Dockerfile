@@ -10,8 +10,9 @@ RUN npm ci --ignore-scripts || npm install --ignore-scripts
 # Copy source and schema BEFORE generating
 COPY . .
 
-# Now generate Prisma client (schema is present)
-RUN npx prisma generate
+# Generate Prisma client with a dummy DATABASE_URL (required by Prisma config)
+# The real DATABASE_URL will be provided at runtime
+RUN DATABASE_URL="postgresql://user:pass@localhost:5432/dummy" npx prisma generate
 
 EXPOSE 3000
 
