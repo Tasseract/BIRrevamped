@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIR eServices</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">BIR eServices</div>
+            <ul>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="auth-buttons" id="auth-buttons">
+                <a href="login.html" class="login-btn">Log In</a>
+                <a href="signup.html" class="signup-btn">Sign Up</a>
+            </div>
+            <div class="user-profile" id="user-profile" style="display: none;">
+                <span id="user-name"></span>
+                <button id="logout-btn" class="logout-btn">Log Out</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-text">
+                <h1>Welcome to BIR eServices</h1>
+                <p>Revamped. Modernized.</p>
+                <div class="hero-buttons">
+                    <a id="dashboard-cta" href="login.html" class="cta-button">Dashboard</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-user-lock"></i></div>
+                <h2>Unified Log in for eServices</h2>
+                <p class="feature-description">Seperate accounts for each service are now united. Less Clutter, More Efficiency</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-credit-card"></i></div>
+                <h2>Single Payment Gateway</h2>
+                <p class="feature-description">Pay at once for each service used.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i class="fas fa-cubes"></i></div>
+                <h2>With the Newest Blockchain Tech, Web3 and more</h2>
+                <p class="feature-description">The future of Taxation, Accountability and Economy.</p>
+            </div>
+        </section>
+
+        <section id="about" class="about">
+            <h2>About Us</h2>
+            <p>We are dedicated to providing a convenient and efficient way for taxpayers to transact with the BIR.</p>
+        </section>
+    </main>
+
+    <footer id="contact">
+        <p>&copy; 2025 BIR eServices. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

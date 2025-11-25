@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Dashboard - BIR eServices</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <a class="logo" href="index.html">BIR eServices</a>
+      <div style="margin-left:auto;display:flex;gap:12px;align-items:center">
+        <button id="admin-logout" class="signup-btn">Log out</button>
+      </div>
+    </nav>
+  </header>
+
+  <main style="max-width:1100px;margin:28px auto;padding:0 18px;">
+    <section class="card" style="padding:20px;border-radius:12px;">
+      <h1>Admin Dashboard</h1>
+      <p class="muted">Manage users and approve/reject registered businesses.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px">
+        <div>
+          <h3>Registered Businesses</h3>
+          <div id="biz-list" style="display:flex;flex-direction:column;gap:10px;margin-top:8px"></div>
+        </div>
+        <div>
+          <h3>Registered Users</h3>
+          <div id="user-list" style="display:flex;flex-direction:column;gap:10px;margin-top:8px"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // simple admin guard
+    const admin = JSON.parse(localStorage.getItem('admin')||'null');
+    if(!admin){ window.location.href = 'admin-login.html'; }
+
+    document.getElementById('admin-logout').addEventListener('click', ()=>{
+      localStorage.removeItem('admin');
+      window.location.href = 'admin-login.html';
+    });
+
+    async function fetchData(){
+      try{
+        const [usersRes, bizRes] = await Promise.all([
+          fetch('http://localhost:3000/admin/users'),
+          fetch('http://localhost:3000/admin/businesses')
+        ]);
+        const usersJson = await usersRes.json();
+        const bizJson = await bizRes.json();
+        renderUsers(usersJson.users||[]);
+        renderBusinesses(bizJson.businesses||[]);
+      }catch(err){ console.error(err); alert('Error fetching admin data. Check server.'); }
+    }
+
+    function renderUsers(users){
+      const el = document.getElementById('user-list'); el.innerHTML='';
+      if(users.length===0){ el.innerHTML='<p class="muted">No users yet.</p>'; return }
+      users.forEach(u=>{
+        const row = document.createElement('div'); row.className='action-card'; row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center';
+        const left = document.createElement('div'); left.innerHTML = `<div style="font-weight:700">${u.firstName} ${u.lastName}</div><div class='muted' style='font-size:0.95rem'>${u.email} • TIN ${u.tin}</div>`;
+        const right = document.createElement('div');
+        const del = document.createElement('button'); del.textContent='Delete User'; del.className='signup-btn'; del.type='button';
+        del.addEventListener('click', async ()=>{
+          if(!confirm('Delete user and related data?')) return;
+          try{
+            const r = await fetch('http://localhost:3000/admin/user/'+u.id,{ method: 'DELETE' });
+            const b = await r.json();
+            if(!r.ok) throw new Error(b.message||'Delete failed');
+            alert('User deleted'); fetchData();
+          }catch(er){ console.error(er); alert('Delete failed'); }
+        });
+        right.appendChild(del);
+        row.appendChild(left); row.appendChild(right); el.appendChild(row);
+      });
+    }
+
+    function renderBusinesses(bs){
+      const el = document.getElementById('biz-list'); el.innerHTML='';
+      if(bs.length===0){ el.innerHTML='<p class="muted">No businesses yet.</p>'; return }
+      bs.forEach(b=>{
+        const row = document.createElement('div'); row.className='action-card'; row.style.display='flex'; row.style.flexDirection='column'; row.style.gap='12px';
+        
+        const statusBadgeColor = b.status === 'APPROVED' ? '#28a745' : b.status === 'REJECTED' ? '#e63946' : '#ffc107';
+        const statusBadgeTextColor = b.status === 'APPROVED' ? '#fff' : b.status === 'REJECTED' ? '#fff' : '#000';
+        
+        const header = document.createElement('div'); 
+        header.style.display='flex'; 
+        header.style.justifyContent='space-between'; 
+        header.style.alignItems='center';
+        header.innerHTML = `
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:1.05rem">${b.businessName}</div>
+            <div class='muted' style='font-size:0.9rem;margin-top:4px'>
+              Business TIN: ${b.businessTin}<br>
+              Owner: ${b.ownerName} (TIN: ${b.ownerTin})<br>
+              Type: ${b.businessType || 'N/A'}<br>
+              Address: ${b.businessAddress || 'N/A'}<br>
+              Contact: ${b.businessContact || 'N/A'}
+            </div>
+          </div>
+          <div style="padding:6px 12px;border-radius:6px;background:${statusBadgeColor};color:${statusBadgeTextColor};font-weight:600;font-size:0.85rem;white-space:nowrap;margin-left:12px">
+            ${b.status}
+          </div>
+        `;
+        
+        const controls = document.createElement('div'); 
+        controls.style.display='flex'; 
+        controls.style.gap='8px';
+        controls.style.justifyContent='flex-end';
+        
+        const approve = document.createElement('button'); 
+        approve.textContent='Approve'; 
+        approve.className='auth-button'; 
+        approve.type='button';
+        approve.style.padding = '6px 12px';
+        approve.style.fontSize = '0.9rem';
+        approve.disabled = b.status === 'APPROVED';
+        
+        const reject = document.createElement('button'); 
+        reject.textContent='Reject'; 
+        reject.className='signup-btn'; 
+        reject.type='button';
+        reject.style.padding = '6px 12px';
+        reject.style.fontSize = '0.9rem';
+        reject.disabled = b.status === 'REJECTED';
+        
+        approve.addEventListener('click', async ()=>{
+          try{
+            const r = await fetch('http://localhost:3000/business/'+b.id,{ 
+              method:'PATCH', 
+              headers:{'Content-Type':'application/json'}, 
+              body: JSON.stringify({ status: 'APPROVED' }) 
+            });
+            const body = await r.json(); 
+            if(!r.ok) throw new Error(body.message||'Error'); 
+            alert('Business approved successfully!'); 
+            fetchData();
+          }catch(err){ console.error(err); alert('Error updating business'); }
+        });
+        
+        reject.addEventListener('click', async ()=>{
+          try{
+            const r = await fetch('http://localhost:3000/business/'+b.id,{ 
+              method:'PATCH', 
+              headers:{'Content-Type':'application/json'}, 
+              body: JSON.stringify({ status: 'REJECTED' }) 
+            });
+            const body = await r.json(); 
+            if(!r.ok) throw new Error(body.message||'Error'); 
+            alert('Business rejected'); 
+            fetchData();
+          }catch(err){ console.error(err); alert('Error updating business'); }
+        });
+        
+        controls.appendChild(approve); 
+        controls.appendChild(reject);
+        row.appendChild(header); 
+        row.appendChild(controls); 
+        el.appendChild(row);
+      });
+    }
+
+    fetchData();
+  </script>
+</body>
+</html>

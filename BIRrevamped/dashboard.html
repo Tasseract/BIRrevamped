@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard - BIR eServices</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <a class="logo" href="index.html">BIR eServices</a>
+      <div style="flex:1"></div>
+      <div class="user-profile" id="dashboard-user-profile">
+        <img id="user-avatar" src="" alt="avatar" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid rgba(0,0,0,0.06);">
+        <div style="display:flex;flex-direction:column;align-items:flex-start;margin-left:8px;">
+          <div id="dashboard-user-name" style="font-weight:700;color:#081224"></div>
+          <div id="dashboard-user-email" style="font-size:0.85rem;color:var(--muted)"></div>
+        </div>
+        <button id="dashboard-logout" class="logout-btn" style="margin-left:14px;">Log Out</button>
+      </div>
+    </nav>
+  </header>
+
+  <main style="max-width:1100px;margin:48px auto;padding:0 24px;">
+    <section class="card" style="padding:28px;border-radius:14px;background:var(--card);box-shadow:0 8px 24px rgba(12,18,30,0.04);">
+      <h1 id="dashboard-heading">Welcome</h1>
+      <p id="dashboard-sub" style="color:var(--muted);margin-top:8px;">This is your personal dashboard where you can see your forms and transactions.</p>
+
+      <div id="dashboard-content" style="margin-top:20px;">
+        <!-- Action cards linking to eService tools -->
+        <div class="dashboard-actions">
+          <a class="action-card" href="form-sim.html" role="button" tabindex="0" aria-label="Form Simulation">
+            <div class="action-icon" aria-hidden="true">📝</div>
+            <div class="action-body">
+              <h3>Form Simulation</h3>
+              <p class="muted">Fill and test BIR forms in a safe simulation environment.</p>
+            </div>
+          </a>
+
+          <a class="action-card" href="payments.html" role="button" tabindex="0" aria-label="Payments">
+            <div class="action-icon" aria-hidden="true">�</div>
+            <div class="action-body">
+              <h3>Payments</h3>
+              <p class="muted">One Payment — manage and process payments for submitted forms.</p>
+            </div>
+          </a>
+
+          <a class="action-card" href="transactions.html" role="button" tabindex="0" aria-label="Transactions">
+            <div class="action-icon" aria-hidden="true">📜</div>
+            <div class="action-body">
+              <h3>Transactions</h3>
+              <p class="muted">View and search your payment receipts and transaction history.</p>
+            </div>
+          </a>
+
+          <a class="action-card" href="register-business.html" role="button" tabindex="0" aria-label="Register a Business">
+            <div class="action-icon" aria-hidden="true">🏢</div>
+            <div class="action-body">
+              <h3>Register a Business</h3>
+              <p class="muted">Start a business registration process with prefilled forms.</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Auth guard and populate user info
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) {
+      // Not logged in — redirect to login page
+      window.location.href = 'login.html';
+    } else {
+      document.getElementById('dashboard-heading').textContent = `Hello, ${user.firstName}`;
+      document.getElementById('dashboard-user-name').textContent = `${user.firstName} ${user.lastName || ''}`;
+      document.getElementById('dashboard-user-email').textContent = user.email;
+
+      // Simple default avatar using initials if no avatar URL
+      const avatarEl = document.getElementById('user-avatar');
+      const initials = (user.firstName || '').charAt(0).toUpperCase() + (user.lastName || '').charAt(0).toUpperCase();
+      // Create a data URL with SVG if you want a built-in avatar
+      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='100%' height='100%' fill='#e6eefb'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='Inter, system-ui, sans-serif' font-size='32' fill='#0b1220'>${initials}</text></svg>`;
+      avatarEl.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+
+      // Logout handler
+      document.getElementById('dashboard-logout').addEventListener('click', () => {
+        localStorage.removeItem('user');
+        window.location.href = 'index.html';
+      });
+
+      // Check if user has approved business
+      async function checkBusinessApproval() {
+        try {
+          const res = await fetch(`http://localhost:3000/business/approved/${user.id}`);
+          const data = await res.json();
+          const hasApproved = data.hasApprovedBusiness;
+
+          if (!hasApproved) {
+            // User doesn't have approved business - lock all tools except business registration
+            const actionCards = document.querySelectorAll('.action-card');
+            actionCards.forEach(card => {
+              const text = card.innerText;
+              // Lock all except "Register a Business"
+              if (!text.includes('Register a Business')) {
+                card.style.opacity = '0.5';
+                card.style.pointerEvents = 'none';
+                card.style.cursor = 'not-allowed';
+                card.style.position = 'relative';
+                
+                // Add overlay message
+                const overlay = document.createElement('div');
+                overlay.style.position = 'absolute';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.right = '0';
+                overlay.style.bottom = '0';
+                overlay.style.display = 'flex';
+                overlay.style.alignItems = 'center';
+                overlay.style.justifyContent = 'center';
+                overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+                overlay.style.borderRadius = '8px';
+                overlay.style.fontSize = '0.85rem';
+                overlay.style.fontWeight = '600';
+                overlay.style.color = '#e63946';
+                overlay.style.textAlign = 'center';
+                overlay.style.padding = '16px';
+                overlay.innerHTML = '🔒 Register a business first to unlock this tool';
+                card.style.position = 'relative';
+                card.appendChild(overlay);
+              }
+            });
+          }
+        } catch (err) {
+          console.error('Error checking business approval:', err);
+        }
+      }
+
+      checkBusinessApproval();
+    }
+  </script>
+</body>
+</html>

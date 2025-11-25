@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2551Q Simulation - BIR eServices</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <a class="logo" href="dashboard.html">BIR eServices</a>
+    </nav>
+  </header>
+
+  <main style="max-width:900px;margin:48px auto;padding:0 24px;">
+    <section class="card" style="padding:28px;border-radius:14px;background:var(--card);">
+      <h1>2551Q — Quarterly Percentage Tax (Simulation)</h1>
+      <p class="muted">Enter amounts and the tax will be calculated automatically. Default tax rate is 3% (editable).</p>
+
+      <form id="t2551q-form" style="margin-top:18px;">
+        <div class="input-group">
+          <label for="payer">Taxpayer Name</label>
+          <input id="payer" name="payer" type="text" placeholder="Your name" />
+        </div>
+
+        <div class="input-row">
+          <div class="input-group">
+            <label for="gross">Gross Sales / Receipts</label>
+            <input id="gross" name="gross" type="number" step="0.01" min="0" value="0" />
+          </div>
+          <div class="input-group">
+            <label for="exempt">Exempt Sales</label>
+            <input id="exempt" name="exempt" type="number" step="0.01" min="0" value="0" />
+          </div>
+        </div>
+
+        <div class="input-row">
+          <div class="input-group">
+            <label for="taxable">Taxable Sales (calculated)</label>
+            <input id="taxable" name="taxable" type="number" step="0.01" readonly />
+          </div>
+          <div class="input-group">
+            <label for="rate">Tax Rate (%)</label>
+            <input id="rate" name="rate" type="number" step="0.01" min="0" value="3" />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="tax">Tax Due (calculated)</label>
+          <input id="tax" name="tax" type="text" readonly />
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:14px;align-items:center;">
+          <button type="button" id="save-sim" class="auth-button">Save Simulation</button>
+          <a href="form-sim.html" class="signup-btn">Back</a>
+        </div>
+      </form>
+
+    </section>
+  </main>
+
+  <script>
+    // Auth guard and business approval check
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) {
+      window.location.href = 'login.html';
+    }
+
+    async function checkApprovalAndLoadBusiness() {
+      try {
+        const res = await fetch(`http://localhost:3000/business/approved/${user.id}`);
+        const data = await res.json();
+        if (!data.hasApprovedBusiness) {
+          alert('You must register and have an approved business before accessing this tool.');
+          window.location.href = 'register-business.html';
+          return;
+        }
+        // Load business info and auto-fill
+        if (data.business) {
+          document.getElementById('payer').value = data.business.ownerName;
+        }
+      } catch (err) {
+        console.error('Error checking approval:', err);
+      }
+    }
+
+    window.addEventListener('load', checkApprovalAndLoadBusiness);
+
+    // Helper to format currency
+    function fmt(v){
+      return Number(v).toLocaleString(undefined,{style:'currency',currency:'PHP',maximumFractionDigits:2});
+    }
+
+    const gross = document.getElementById('gross');
+    const exempt = document.getElementById('exempt');
+    const taxable = document.getElementById('taxable');
+    const rate = document.getElementById('rate');
+    const tax = document.getElementById('tax');
+    const saveBtn = document.getElementById('save-sim');
+
+    function recalc(){
+      const g = parseFloat(gross.value) || 0;
+      const e = parseFloat(exempt.value) || 0;
+      const r = parseFloat(rate.value) || 0;
+      const t = Math.max(0, g - e);
+      const taxDue = t * (r/100);
+      taxable.value = t.toFixed(2);
+      tax.value = fmt(taxDue);
+    }
+
+    [gross,exempt,rate].forEach(el => el.addEventListener('input', recalc));
+    window.addEventListener('load', recalc);
+
+    // Simple save to localStorage (per user) so user can revisit their simulations later
+    saveBtn.addEventListener('click', ()=>{
+      const sim = {
+        form:'2551Q',
+        payer: document.getElementById('payer').value || null,
+        gross: parseFloat(gross.value)||0,
+        exempt: parseFloat(exempt.value)||0,
+        taxable: parseFloat(taxable.value)||0,
+        rate: parseFloat(rate.value)||0,
+        tax: tax.value,
+        createdAt: new Date().toISOString()
+      };
+      const key = 'simulations';
+      const arr = JSON.parse(localStorage.getItem(key)||'[]');
+      arr.push(sim);
+      localStorage.setItem(key, JSON.stringify(arr));
+      alert('Simulation saved locally.');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Login - BIR eServices</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-box">
+      <a href="index.html" class="auth-logo">BIR eServices</a>
+      <h2>Admin Login</h2>
+      <p class="auth-subtitle">Enter admin credentials to access the admin dashboard.</p>
+      <form id="admin-login-form">
+        <div class="input-group">
+          <label for="admin-username">Username</label>
+          <input id="admin-username" name="username" required />
+        </div>
+        <div class="input-group">
+          <label for="admin-password">Password</label>
+          <input id="admin-password" name="password" type="password" required />
+        </div>
+        <button type="submit" class="auth-button">Sign in as Admin</button>
+      </form>
+      <p class="auth-footer"><a href="login.html">Back to user login</a></p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('admin-login-form').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const user = document.getElementById('admin-username').value.trim();
+      const pass = document.getElementById('admin-password').value;
+      // Hard-coded admin creds for dev/testing
+      if (user === 'BIR' && pass === 'BIR123'){
+        // mark admin session in localStorage (simple flag for now)
+        localStorage.setItem('admin', JSON.stringify({ username: 'BIR', loggedAt: new Date().toISOString() }));
+        window.location.href = 'admin-dashboard.html';
+      } else {
+        alert('Invalid admin credentials.');
+      }
+    });
+  </script>
+</body>
+</html>

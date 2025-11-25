@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payments - BIR eServices</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <a class="logo" href="index.html">BIR eServices</a>
+    </nav>
+  </header>
+  <main style="max-width:900px;margin:48px auto;padding:0 24px;">
+    <section class="card" style="padding:28px;border-radius:14px;background:var(--card);">
+      <h1>Payments</h1>
+      <p class="muted">Select saved form simulations and pay them together (cart-style).</p>
+
+      <div style="display:flex;gap:20px;margin-top:18px;flex-wrap:wrap;">
+        <div style="flex:1 1 520px;">
+          <h3 style="margin-bottom:8px">Saved Simulations</h3>
+          <div id="sim-list" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+
+        <aside style="width:360px;">
+          <h3 style="margin-bottom:8px">Cart</h3>
+          <div id="cart-box" style="padding:14px;border-radius:12px;background:var(--card);border:1px solid rgba(15,23,42,0.04);box-shadow:0 6px 18px rgba(8,30,80,0.03)">
+            <div id="cart-items" style="display:flex;flex-direction:column;gap:8px;min-height:60px">No items selected</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-weight:700">
+              <div>Total</div>
+              <div id="cart-total">PHP 0.00</div>
+            </div>
+            <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:10px">
+              <button id="pay-now" class="auth-button" disabled>Pay Now</button>
+              <a href="dashboard.html" class="signup-btn">Back</a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Auth guard and business approval check
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) {
+      window.location.href = 'login.html';
+    }
+
+    async function checkApprovalAndLoadBusiness() {
+      try {
+        const res = await fetch(`http://localhost:3000/business/approved/${user.id}`);
+        const data = await res.json();
+        if (!data.hasApprovedBusiness) {
+          alert('You must register and have an approved business before accessing this tool.');
+          window.location.href = 'register-business.html';
+          return;
+        }
+      } catch (err) {
+        console.error('Error checking approval:', err);
+      }
+    }
+
+    checkApprovalAndLoadBusiness();
+
+    function fmtNumber(v){ return Number(v).toLocaleString(undefined,{style:'currency',currency:'PHP',maximumFractionDigits:2}); }
+
+    const simListEl = document.getElementById('sim-list');
+    const cartItemsEl = document.getElementById('cart-items');
+    const cartTotalEl = document.getElementById('cart-total');
+    const payBtn = document.getElementById('pay-now');
+
+  let simulations = JSON.parse(localStorage.getItem('simulations')||'[]');
+  // ensure each simulation has a stable id to avoid index-shifting bugs
+  simulations = simulations.map(s=>{ if(!s._id) s._id = 'sim_'+(s.createdAt? new Date(s.createdAt).getTime() : Date.now())+'_'+Math.floor(Math.random()*99999); return s });
+  // persist any generated ids back so future renders are stable
+  localStorage.setItem('simulations', JSON.stringify(simulations));
+    // Filter out already paid unless you want to show them (we'll show paid but disabled)
+    function renderSims(){
+      simListEl.innerHTML='';
+      if(simulations.length===0){ simListEl.innerHTML = '<p class="muted">No saved simulations yet.</p>'; return }
+      simulations.forEach((s, idx)=>{
+        const uid = s._id;
+        const item = document.createElement('div');
+        item.className = 'action-card';
+        item.style.display = 'flex';
+        item.style.alignItems = 'center';
+        item.style.justifyContent = 'space-between';
+
+        const left = document.createElement('div');
+        left.style.display='flex'; left.style.alignItems='center'; left.style.gap='12px';
+        const icon = document.createElement('div'); icon.className='action-icon'; icon.textContent = s.form==='2551Q'?'🧾':'📄';
+        const body = document.createElement('div');
+        const title = document.createElement('div'); title.style.fontWeight='700'; title.textContent = `${s.form} — ${s.payer||'Unnamed'}`;
+        const desc = document.createElement('div'); desc.className='muted'; desc.style.fontSize='0.95rem'; desc.textContent = `Saved: ${new Date(s.createdAt).toLocaleString()}`;
+        body.appendChild(title); body.appendChild(desc);
+        left.appendChild(icon); left.appendChild(body);
+
+  // center: checkbox + amount
+  const center = document.createElement('div');
+  center.style.display='flex'; center.style.flexDirection='row'; center.style.alignItems='center'; center.style.gap='12px';
+  const checkbox = document.createElement('input'); checkbox.type='checkbox'; checkbox.style.margin='0'; checkbox.checked = false;
+  // compute numeric tax
+  const amt = computeTaxAmount(s);
+  const price = document.createElement('div'); price.textContent = fmtNumber(amt); price.style.fontWeight='700';
+  center.appendChild(checkbox); center.appendChild(price);
+
+  // controls container separated to its own column so we can place it independently
+  const controls = document.createElement('div');
+  controls.style.display = 'none';
+  controls.style.gap = '6px';
+  controls.style.flexDirection = 'column'; controls.style.alignItems = 'center';
+  controls.style.minWidth = '84px';
+
+  const editBtn = document.createElement('button');
+  editBtn.textContent = 'Edit';
+  editBtn.className = 'auth-button';
+  editBtn.style.padding = '6px 8px';
+  editBtn.style.fontSize = '0.85rem';
+  editBtn.type = 'button';
+  editBtn.style.cursor = 'pointer';
+
+  const delBtn = document.createElement('button');
+  delBtn.textContent = 'Delete';
+  delBtn.className = 'signup-btn';
+  delBtn.style.padding = '6px 8px';
+  delBtn.style.fontSize = '0.85rem';
+  delBtn.type = 'button';
+  delBtn.style.cursor = 'pointer';
+  delBtn.style.pointerEvents = 'auto';
+
+  controls.appendChild(editBtn);
+  controls.appendChild(delBtn);
+
+  if(s.paid){ const paidLabel = document.createElement('div'); paidLabel.textContent='PAID'; paidLabel.style.color='green'; paidLabel.style.fontWeight='700'; center.appendChild(paidLabel); }
+
+  // append left, center (checkbox+price) and controls as a separate column
+  item.appendChild(left); item.appendChild(center); item.appendChild(controls);
+        simListEl.appendChild(item);
+
+        // initialize checkbox state from cart
+        // initialize checkbox state from cart (use stable id)
+        if (cart.has(uid)){
+          checkbox.checked = true;
+          controls.style.display = 'flex';
+        }
+
+              checkbox.addEventListener('change', (ev)=>{
+                ev.stopPropagation();
+                if(checkbox.checked){
+                  addToCart(uid, s);
+                  controls.style.display = 'flex';
+                } else { 
+                  removeFromCart(uid);
+                  controls.style.display = 'none';
+                }
+              });
+
+        // Edit handler: open modal editor instead of a prompt
+        editBtn.addEventListener('click', (ev)=>{
+          ev.stopPropagation();
+          openEditModal(idx);
+        });
+
+        // Delete handler: remove simulation entirely (with confirmation)
+        delBtn.addEventListener('click', (ev)=>{
+          ev.preventDefault();
+          ev.stopPropagation();
+          console.log('Delete clicked for id', uid);
+          if(!confirm('Delete this saved simulation? This cannot be undone.')) return;
+          // find index and remove from simulations array
+          const removeIndex = simulations.findIndex(x=>x._id===uid);
+          if(removeIndex>-1) simulations.splice(removeIndex,1);
+          localStorage.setItem('simulations', JSON.stringify(simulations));
+          // remove from cart if present (no re-indexing needed because cart keys are stable ids)
+          if(cart.has(uid)) cart.delete(uid);
+          renderSims(); renderCart();
+        });
+      });
+    }
+
+  const cart = new Map();
+    function computeTaxAmount(s){
+      if(s.form==='2551Q'){
+        const t = parseFloat(s.taxable)||0; const r = parseFloat(s.rate)||0; return +(t * r/100);
+      }
+      if(s.form==='1701Q'){
+        const n = parseFloat(s.net)||0; const r = parseFloat(s.rate)||0; return +(n * r/100);
+      }
+      return 0;
+    }
+
+  function addToCart(uid,s){ cart.set(uid,s); renderCart(); }
+  function removeFromCart(uid){ cart.delete(uid); renderCart(); }
+
+    function renderCart(){
+      cartItemsEl.innerHTML='';
+      if(cart.size===0){ cartItemsEl.textContent='No items selected'; cartTotalEl.textContent = fmtNumber(0); payBtn.disabled=true; return }
+  let total=0; cart.forEach((s,uid)=>{ const amt=computeTaxAmount(s); total+=amt; const row=document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.textContent=`${s.form} — ${s.payer||'Unnamed'}`; const a=document.createElement('div'); a.textContent=fmtNumber(amt); row.appendChild(a); cartItemsEl.appendChild(row); });
+      cartTotalEl.textContent = fmtNumber(total);
+      payBtn.disabled=false;
+    }
+
+    // Pay -> create transaction, mark items paid
+    payBtn.addEventListener('click', ()=>{
+      const items = Array.from(cart.entries()).map(([uid,s])=>{
+        const index = simulations.findIndex(x=>x._id===uid);
+        return { index, id: uid, form: s.form, payer: s.payer, amount: computeTaxAmount(s) };
+      });
+      if(items.length===0) return;
+      const total = items.reduce((a,b)=>a+b.amount,0);
+      const tx = { id: 'tx_'+Date.now(), items, total, totalFormatted: fmtNumber(total), createdAt:new Date().toISOString() };
+      const txs = JSON.parse(localStorage.getItem('transactions')||'[]'); txs.push(tx); localStorage.setItem('transactions', JSON.stringify(txs));
+      // mark simulations as paid
+  items.forEach(it=>{ if(it.index>-1 && simulations[it.index]) simulations[it.index].paid=true; });
+      localStorage.setItem('simulations', JSON.stringify(simulations));
+      // clear cart and re-render
+      cart.clear(); renderSims(); renderCart();
+      alert('Payment recorded. Transaction ID: '+tx.id);
+      // redirect to transactions view
+      window.location.href = 'transactions.html';
+    });
+
+    renderSims(); renderCart();
+    
+    // --- Modal editor logic ---
+    let currentEditIndex = null;
+    const modal = document.createElement('div');
+    modal.id = 'edit-modal';
+    modal.style.display = 'none';
+    modal.style.position = 'fixed';
+    modal.style.inset = '0';
+    modal.style.background = 'rgba(2,6,23,0.45)';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    modal.style.padding = '24px';
+    modal.style.zIndex = '1100';
+    modal.innerHTML = `
+      <div style="background:var(--bg);border-radius:12px;padding:20px;max-width:680px;width:100%;box-shadow:0 12px 40px rgba(2,6,23,0.3);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3 style="margin:0">Edit Simulation</h3>
+          <button id="edit-close" class="signup-btn" style="padding:6px 8px">Close</button>
+        </div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          <div style="flex:1 1 320px">
+            <label style="display:block;font-weight:600">Payer name</label>
+            <input id="edit-payer" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(15,23,42,0.06)" />
+
+            <div id="edit-field-rate" style="margin-top:10px">
+              <label style="display:block;font-weight:600">Rate (%)</label>
+              <input id="edit-rate" type="number" step="0.01" style="width:120px;padding:8px;border-radius:8px;border:1px solid rgba(15,23,42,0.06)" />
+            </div>
+
+            <div id="edit-field-taxable" style="margin-top:10px">
+              <label style="display:block;font-weight:600">Taxable / Net</label>
+              <input id="edit-taxable" type="number" step="0.01" style="width:160px;padding:8px;border-radius:8px;border:1px solid rgba(15,23,42,0.06)" />
+            </div>
+          </div>
+
+          <div style="flex:1 1 280px;min-width:260px;background:var(--card);padding:12px;border-radius:10px">
+            <div style="font-weight:700;margin-bottom:6px">Preview</div>
+            <div id="edit-preview" style="font-size:0.95rem;color:var(--muted);">No preview yet.</div>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">
+          <button id="edit-save" class="auth-button" style="padding:8px 12px">Save</button>
+          <button id="edit-cancel" class="signup-btn" style="padding:8px 12px">Cancel</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    const editPayer = document.getElementById('edit-payer');
+    const editRate = document.getElementById('edit-rate');
+    const editTaxable = document.getElementById('edit-taxable');
+    const editPreview = document.getElementById('edit-preview');
+    const editSave = document.getElementById('edit-save');
+    const editCancel = document.getElementById('edit-cancel');
+    const editClose = document.getElementById('edit-close');
+
+    function updatePreviewFromInputs(){
+      const payer = editPayer.value || 'Unnamed';
+      const rate = parseFloat(editRate.value)||0;
+      const taxable = parseFloat(editTaxable.value)||0;
+      const s = simulations[currentEditIndex];
+      let amount = 0;
+      if(!s) return;
+      if(s.form==='2551Q') amount = +(taxable * rate/100);
+      if(s.form==='1701Q') amount = +(taxable * rate/100);
+      editPreview.innerHTML = `<div><strong>${s.form}</strong></div><div style="margin-top:6px">Payer: ${payer}</div><div style="margin-top:6px">Rate: ${rate}%</div><div style="margin-top:6px">Base: ${Number(taxable).toLocaleString()}</div><div style="margin-top:8px;font-weight:800">Amount: ${Number(amount).toLocaleString(undefined,{style:'currency',currency:'PHP',maximumFractionDigits:2})}</div>`;
+    }
+
+    function openEditModal(idx){
+      currentEditIndex = idx;
+      const s = simulations[idx];
+      if(!s) return;
+      editPayer.value = s.payer||'';
+      editRate.value = s.rate||'';
+      // prefer taxable for 2551Q or net for 1701Q
+      editTaxable.value = s.taxable || s.net || '';
+      // show/hide label if needed
+      document.getElementById('edit-field-taxable').querySelector('label').textContent = s.form==='2551Q' ? 'Taxable' : 'Net';
+      modal.style.display = 'flex';
+      updatePreviewFromInputs();
+    }
+
+    function closeEditModal(){
+      currentEditIndex = null;
+      modal.style.display = 'none';
+    }
+
+    editPayer.addEventListener('input', updatePreviewFromInputs);
+    editRate.addEventListener('input', updatePreviewFromInputs);
+    editTaxable.addEventListener('input', updatePreviewFromInputs);
+
+    editSave.addEventListener('click', ()=>{
+      if(currentEditIndex===null) return closeEditModal();
+      const s = simulations[currentEditIndex];
+      s.payer = editPayer.value || '';
+      s.rate = editRate.value || s.rate || '';
+      // map back to appropriate field
+      if(s.form==='2551Q') s.taxable = editTaxable.value || s.taxable || '';
+      if(s.form==='1701Q') s.net = editTaxable.value || s.net || '';
+      // persist
+      localStorage.setItem('simulations', JSON.stringify(simulations));
+      // update UI title for the specific card - easiest is to re-render list
+      renderSims();
+      // update cart entry if this simulation is currently selected (cart uses stable ids)
+      const saved = simulations[currentEditIndex];
+      if(saved){
+        const uid = saved._id;
+        if(cart.has(uid)){
+          cart.set(uid, saved);
+          renderCart();
+        }
+      }
+      closeEditModal();
+    });
+
+    editCancel.addEventListener('click', ()=>{ closeEditModal(); });
+    editClose.addEventListener('click', ()=>{ closeEditModal(); });
+  </script>
+</main>
+
+</body>
+</html>
