@@ -66,6 +66,7 @@
     </section>
   </main>
 
+  <script src="api-config.js"></script>
   <script>
     // Auth guard and populate user info
     const user = JSON.parse(localStorage.getItem('user'));
@@ -93,7 +94,7 @@
       // Check if user has approved business
       async function checkBusinessApproval() {
         try {
-          const res = await fetch(`http://localhost:3000/business/approved/${user.id}`);
+          const res = await fetch(`${API_BASE}/business/approved/${user.id}`);
           const data = await res.json();
           const hasApproved = data.hasApprovedBusiness;
 
