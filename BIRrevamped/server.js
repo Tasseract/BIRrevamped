@@ -369,6 +369,5 @@ app.get('/api/transactions', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  const host = FRONTEND_URL && FRONTEND_URL !== '*' ? FRONTEND_URL : 'http://localhost';
   console.log(`Server is running on http://localhost:${PORT}`);
 });
