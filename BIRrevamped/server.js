@@ -9,11 +9,8 @@ const prisma = new PrismaClient();
 const app = express();
 const saltRounds = 10;
 
-// Configure CORS to allow frontend origin in production
-const FRONTEND_URL = process.env.FRONTEND_URL || '*';
-const corsOptions = {};
-if (FRONTEND_URL && FRONTEND_URL !== '*') corsOptions.origin = FRONTEND_URL;
-app.use(cors(corsOptions));
+// Configure CORS to allow all origins (safe for demo/testing)
+app.use(cors());
 app.use(express.json());
 
 app.post('/signup', async (req, res) => {
