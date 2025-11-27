@@ -222,6 +222,19 @@
       var API_BASE = 'http://localhost:3000';
     }
 
+    // Utility: show status messages in the page
+    function showStatus(type, message) {
+      const statusContainer = document.getElementById('status-container');
+      const cls = type === 'pending' ? 'status-message pending' : type === 'approved' ? 'status-message approved' : 'status-message rejected';
+      statusContainer.innerHTML = `<div class="${cls}">${message}</div>`;
+    }
+
+    // Clear status area
+    function clearStatus() {
+      const statusContainer = document.getElementById('status-container');
+      statusContainer.innerHTML = '';
+    }
+
     // Check current registration status
     async function checkRegistrationStatus() {
       try {
@@ -263,6 +276,7 @@
         }
       } catch (err) {
         console.error('Error checking registration status:', err);
+        showStatus('rejected', 'Unable to check registration status. Please try again later.');
       }
     }
 
@@ -312,6 +326,58 @@
         }
       });
     }
-  </script>
-</body>
-</html>
+        // client-side validation for required fields
+        const requiredFields = [
+          { id: 'businessName', label: 'Business Name' },
+          { id: 'businessTin', label: 'Business TIN' },
+          { id: 'ownerName', label: 'Owner Name' },
+          { id: 'ownerTin', label: 'Owner TIN' }
+        ];
+        const missing = requiredFields.filter(f => !payload[f.id] || payload[f.id].length === 0).map(f => f.label);
+        // clear previous highlights
+        requiredFields.forEach(f => document.getElementById(f.id).style.borderColor = '');
+        if (missing.length) {
+          // highlight missing fields
+          requiredFields.forEach(f => {
+            if (missing.includes(f.label)) document.getElementById(f.id).style.borderColor = '#e63946';
+          });
+          showStatus('rejected', `<strong>Missing required fields:</strong> ${missing.join(', ')}`);
+          return;
+        }
+
+        // disable submit to prevent double-posts
+        const submitBtn = registerForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Submitting...';
+        clearStatus();
+
+        try {
+          console.log('Submitting payload:', payload);
+          const res = await fetch(`${API_BASE}/business/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const body = await res.json().catch(() => ({}));
+          console.log('Server response:', { status: res.status, body });
+
+          if (!res.ok) {
+            const errorMsg = body.message || body.details || 'Registration failed';
+            console.error('Registration error:', errorMsg);
+            showStatus('rejected', `<strong>Error:</strong> ${errorMsg}`);
+            return;
+          }
+
+          showStatus('pending', '<strong>✔ Business registered</strong><br>Your registration is pending admin approval. You will be notified once it is reviewed.');
+          // hide form after success
+          document.getElementById('register-business-form').style.display = 'none';
+          // refresh status from server (to show pending/approved)
+          setTimeout(checkRegistrationStatus, 800);
+        } catch (err) {
+          console.error('Network/Fetch error:', err);
+          showStatus('rejected', `<strong>Network error:</strong> ${err.message || err}`);
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }
