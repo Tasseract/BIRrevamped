@@ -6,189 +6,105 @@
   <title>Register Business - BIR eServices</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    .form-section {
-      margin-bottom: 28px;
-      padding: 20px;
-      background: rgba(11, 18, 32, 0.02);
-      border-radius: 8px;
-    }
-    .form-section h3 {
-      margin-bottom: 16px;
-      font-size: 1rem;
-      color: #081224;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-    .form-grid.full {
-      grid-template-columns: 1fr;
-    }
-    .input-group {
-      display: flex;
-      flex-direction: column;
-    }
-    .input-group label {
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: #081224;
-    }
-    .input-group input,
-    .input-group select,
-    .input-group textarea {
-      padding: 10px 12px;
-      border: 1px solid #e1e7ed;
-      border-radius: 6px;
-      font-family: inherit;
-      font-size: 0.95rem;
-      transition: border-color 0.2s;
-    }
-    .input-group input:focus,
-    .input-group select:focus,
-    .input-group textarea:focus {
-      outline: none;
-      border-color: #0b1220;
-      box-shadow: 0 0 0 3px rgba(11, 18, 32, 0.06);
-    }
-    .input-group textarea {
-      min-height: 80px;
-      resize: vertical;
-    }
-    .input-group .required-note {
-      font-size: 0.8rem;
-      color: #e63946;
-      margin-top: 4px;
+    .status-container {
+      margin-bottom: 20px;
+      min-height: 20px;
     }
     .status-message {
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      display: none;
+      padding: 15px;
+      border-radius: 5px;
+      font-size: 14px;
+      line-height: 1.5;
     }
     .status-message.pending {
-      background: #fff3cd;
+      background-color: #fff3cd;
       color: #856404;
       border: 1px solid #ffc107;
-      display: block;
     }
     .status-message.approved {
-      background: #d4edda;
+      background-color: #d4edda;
       color: #155724;
       border: 1px solid #28a745;
-      display: block;
     }
     .status-message.rejected {
-      background: #f8d7da;
+      background-color: #f8d7da;
       color: #721c24;
       border: 1px solid #f5c6cb;
-      display: block;
     }
-    .button-group {
-      display: flex;
-      gap: 12px;
-      margin-top: 28px;
-      justify-content: flex-end;
+    .form-group input:invalid,
+    .form-group input.error {
+      border-color: #e63946 !important;
     }
   </style>
 </head>
 <body>
-  <header>
-    <nav>
-      <a class="logo" href="index.html">BIR eServices</a>
-      <div style="flex:1"></div>
-      <div class="user-profile" id="reg-user-profile">
-        <button id="reg-logout" class="logout-btn">Log Out</button>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <a href="index.html">BIR eServices</a>
       </div>
-    </nav>
-  </header>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="dashboard.html" class="nav-link">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <button id="reg-logout" class="nav-link" style="background:none;border:none;cursor:pointer;">Logout</button>
+        </li>
+      </ul>
+    </div>
+  </nav>
 
-  <main style="max-width:900px;margin:48px auto;padding:0 24px;">
-    <section class="card" style="padding:28px;border-radius:14px;background:var(--card);box-shadow:0 8px 24px rgba(12,18,30,0.04);">
-      <h1>Register Your Business</h1>
-      <p class="muted" style="margin-top:8px;">Complete this form to register your business with the Bureau of Internal Revenue (BIR). All fields marked with * are required.</p>
+  <main class="auth-container">
+    <section class="auth-section">
+      <h1>Register Business</h1>
+      <p>Complete your business registration to access BIR tools and services.</p>
 
-      <div id="status-container"></div>
+      <div id="status-container" class="status-container"></div>
 
-      <form id="register-business-form">
-        <!-- Business Information -->
-        <div class="form-section">
-          <h3>📋 Business Information</h3>
-          <div class="form-grid">
-            <div class="input-group">
-              <label for="businessName">Business Name <span style="color:#e63946;">*</span></label>
-              <input type="text" id="businessName" name="businessName" required placeholder="Enter your business name">
-              <span class="required-note">As registered with BIR</span>
-            </div>
-            <div class="input-group">
-              <label for="businessTin">Business TIN <span style="color:#e63946;">*</span></label>
-              <input type="text" id="businessTin" name="businessTin" required placeholder="e.g., 123-456-789-000">
-              <span class="required-note">Tax Identification Number</span>
-            </div>
-          </div>
-          <div class="form-grid full" style="margin-top:16px;">
-            <div class="input-group">
-              <label for="businessType">Business Type <span style="color:#e63946;">*</span></label>
-              <select id="businessType" name="businessType" required>
-                <option value="">Select Business Type</option>
-                <option value="Sole Proprietorship">Sole Proprietorship</option>
-                <option value="Partnership">Partnership</option>
-                <option value="Corporation">Corporation</option>
-                <option value="Cooperative">Cooperative</option>
-                <option value="Non-Stock, Non-Profit">Non-Stock, Non-Profit</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-grid full" style="margin-top:16px;">
-            <div class="input-group">
-              <label for="businessAddress">Business Address <span style="color:#e63946;">*</span></label>
-              <textarea id="businessAddress" name="businessAddress" required placeholder="Full business address (Street, Barangay, City/Municipality, Province, Postal Code)"></textarea>
-            </div>
-          </div>
-          <div class="form-grid" style="margin-top:16px;">
-            <div class="input-group">
-              <label for="businessContact">Contact Number <span style="color:#e63946;">*</span></label>
-              <input type="tel" id="businessContact" name="businessContact" required placeholder="e.g., +63-2-1234-5678">
-            </div>
-            <div class="input-group">
-              <label for="businessEmail">Business Email</label>
-              <input type="email" id="businessEmail" name="businessEmail" placeholder="e.g., info@business.com">
-            </div>
-          </div>
-          <div class="form-grid full" style="margin-top:16px;">
-            <div class="input-group">
-              <label for="businessRegNum">BIR Registration Number</label>
-              <input type="text" id="businessRegNum" name="businessRegNum" placeholder="Optional: If already registered with BIR">
-            </div>
-          </div>
+      <form id="register-business-form" class="auth-form">
+        <div class="form-group">
+          <label for="businessName">Business Name *</label>
+          <input type="text" id="businessName" name="businessName" placeholder="Enter your business name" required>
         </div>
 
-        <!-- Owner Information -->
-        <div class="form-section">
-          <h3>👤 Owner Information</h3>
-          <div class="form-grid">
-            <div class="input-group">
-              <label for="ownerName">Full Name <span style="color:#e63946;">*</span></label>
-              <input type="text" id="ownerName" name="ownerName" required placeholder="First Name, Middle Name, Last Name">
-              <span class="required-note">As shown in government ID</span>
-            </div>
-            <div class="input-group">
-              <label for="ownerTin">Personal TIN <span style="color:#e63946;">*</span></label>
-              <input type="text" id="ownerTin" name="ownerTin" required placeholder="e.g., 123-456-789-000">
-              <span class="required-note">Your Tax Identification Number</span>
-            </div>
-          </div>
+        <div class="form-group">
+          <label for="businessTin">Business TIN *</label>
+          <input type="text" id="businessTin" name="businessTin" placeholder="Enter TIN" required>
         </div>
 
-        <!-- Terms & Submit -->
-        <div style="margin-top:28px;">
-          <label style="display:flex;align-items:center;gap:8px;font-size:0.95rem;cursor:pointer;">
-            <input type="checkbox" id="terms-agree" required style="width:18px;height:18px;cursor:pointer;">
-            <span>I certify that the information provided is accurate and complete as required by the Bureau of Internal Revenue.</span>
-          </label>
+        <div class="form-group">
+          <label for="ownerName">Owner Name *</label>
+          <input type="text" id="ownerName" name="ownerName" placeholder="Enter owner name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="ownerTin">Owner TIN *</label>
+          <input type="text" id="ownerTin" name="ownerTin" placeholder="Enter owner TIN" required>
+        </div>
+
+        <div class="form-group">
+          <label for="businessType">Business Type</label>
+          <input type="text" id="businessType" name="businessType" placeholder="e.g., Corporation, Partnership">
+        </div>
+
+        <div class="form-group">
+          <label for="businessAddress">Business Address</label>
+          <input type="text" id="businessAddress" name="businessAddress" placeholder="Enter business address">
+        </div>
+
+        <div class="form-group">
+          <label for="businessContact">Business Contact</label>
+          <input type="tel" id="businessContact" name="businessContact" placeholder="Enter contact number">
+        </div>
+
+        <div class="form-group">
+          <label for="businessEmail">Business Email</label>
+          <input type="email" id="businessEmail" name="businessEmail" placeholder="Enter email address">
+        </div>
+
+        <div class="form-group">
+          <label for="businessRegNum">Business Registration Number</label>
+          <input type="text" id="businessRegNum" name="businessRegNum" placeholder="Enter registration number">
         </div>
 
         <div class="button-group">
@@ -216,26 +132,18 @@
       });
     }
 
-    // Ensure API_BASE is available (from api-config.js)
-    if (typeof API_BASE === 'undefined') {
-      // fallback to localhost
-      var API_BASE = 'http://localhost:3000';
-    }
-
-    // Utility: show status messages in the page
+    // Helpers for UI status
     function showStatus(type, message) {
       const statusContainer = document.getElementById('status-container');
       const cls = type === 'pending' ? 'status-message pending' : type === 'approved' ? 'status-message approved' : 'status-message rejected';
       statusContainer.innerHTML = `<div class="${cls}">${message}</div>`;
     }
 
-    // Clear status area
     function clearStatus() {
-      const statusContainer = document.getElementById('status-container');
-      statusContainer.innerHTML = '';
+      document.getElementById('status-container').innerHTML = '';
     }
 
-    // Check current registration status
+    // Check registration status for current user
     async function checkRegistrationStatus() {
       try {
         const res = await fetch(`${API_BASE}/businesses?ownerId=${user.id}`);
@@ -244,34 +152,18 @@
         
         if (businesses.length > 0) {
           const latestBusiness = businesses[0];
-          const statusContainer = document.getElementById('status-container');
           
           if (latestBusiness.status === 'PENDING') {
-            statusContainer.innerHTML = `
-              <div class="status-message pending">
-                <strong>⏳ Pending Approval</strong><br>
-                Your business registration is awaiting admin approval. You will be notified once it is reviewed.
-              </div>
-            `;
+            showStatus('pending', '<strong>⏳ Pending Approval</strong><br>Your business registration is awaiting admin approval. You will be notified once it is reviewed.');
             document.getElementById('register-business-form').style.display = 'none';
           } else if (latestBusiness.status === 'APPROVED') {
-            statusContainer.innerHTML = `
-              <div class="status-message approved">
-                <strong>✓ Approved</strong><br>
-                Your business registration has been approved! You can now access all tools.
-              </div>
-            `;
+            showStatus('approved', '<strong>✓ Approved</strong><br>Your business registration has been approved! You can now access all tools. Redirecting...');
             document.getElementById('register-business-form').style.display = 'none';
             setTimeout(() => {
               window.location.href = 'dashboard.html';
             }, 2000);
           } else if (latestBusiness.status === 'REJECTED') {
-            statusContainer.innerHTML = `
-              <div class="status-message rejected">
-                <strong>✗ Rejected</strong><br>
-                Your business registration was rejected. Please review the information and try again.
-              </div>
-            `;
+            showStatus('rejected', '<strong>✗ Rejected</strong><br>Your business registration was rejected. Please review the information and try again.');
           }
         }
       } catch (err) {
@@ -280,6 +172,7 @@
       }
     }
 
+    // Initial status check
     checkRegistrationStatus();
 
     // Form submission handler
@@ -301,51 +194,31 @@
           ownerId: user.id
         };
 
-        try {
-          console.log('Submitting payload:', payload);
-          const res = await fetch(`${API_BASE}/business/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
-          const body = await res.json();
-          console.log('Server response:', { status: res.status, body });
-          
-          if (!res.ok) {
-            const errorMsg = body.message || body.details || 'Registration failed';
-            console.error('Registration error:', errorMsg);
-            alert(errorMsg);
-            return;
-          }
-
-          alert('Business registered successfully! Your registration is pending admin approval. Please wait for approval notification.');
-          checkRegistrationStatus();
-        } catch (err) {
-          console.error('Network/Fetch error:', err);
-          alert('Error registering business: ' + err.message);
-        }
-      });
-    }
-        // client-side validation for required fields
+        // Client-side validation for required fields
         const requiredFields = [
           { id: 'businessName', label: 'Business Name' },
           { id: 'businessTin', label: 'Business TIN' },
           { id: 'ownerName', label: 'Owner Name' },
           { id: 'ownerTin', label: 'Owner TIN' }
         ];
+
         const missing = requiredFields.filter(f => !payload[f.id] || payload[f.id].length === 0).map(f => f.label);
-        // clear previous highlights
+
+        // Clear previous highlights
         requiredFields.forEach(f => document.getElementById(f.id).style.borderColor = '');
+
         if (missing.length) {
-          // highlight missing fields
+          // Highlight missing fields
           requiredFields.forEach(f => {
-            if (missing.includes(f.label)) document.getElementById(f.id).style.borderColor = '#e63946';
+            if (missing.includes(f.label)) {
+              document.getElementById(f.id).style.borderColor = '#e63946';
+            }
           });
           showStatus('rejected', `<strong>Missing required fields:</strong> ${missing.join(', ')}`);
           return;
         }
 
-        // disable submit to prevent double-posts
+        // Disable submit button to prevent double-posts
         const submitBtn = registerForm.querySelector('button[type="submit"]');
         submitBtn.disabled = true;
         const originalText = submitBtn.textContent;
@@ -366,18 +239,24 @@
             const errorMsg = body.message || body.details || 'Registration failed';
             console.error('Registration error:', errorMsg);
             showStatus('rejected', `<strong>Error:</strong> ${errorMsg}`);
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
             return;
           }
 
-          showStatus('pending', '<strong>✔ Business registered</strong><br>Your registration is pending admin approval. You will be notified once it is reviewed.');
-          // hide form after success
+          showStatus('pending', '<strong>✔ Business registered successfully!</strong><br>Your registration is pending admin approval. You will be notified once it is reviewed.');
+          // Hide form after success
           document.getElementById('register-business-form').style.display = 'none';
-          // refresh status from server (to show pending/approved)
-          setTimeout(checkRegistrationStatus, 800);
+          // Refresh status from server
+          setTimeout(checkRegistrationStatus, 1000);
         } catch (err) {
           console.error('Network/Fetch error:', err);
           showStatus('rejected', `<strong>Network error:</strong> ${err.message || err}`);
-        } finally {
           submitBtn.disabled = false;
           submitBtn.textContent = originalText;
         }
+      });
+    }
+  </script>
+</body>
+</html>
