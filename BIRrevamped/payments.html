@@ -42,6 +42,7 @@
 
   </main>
 
+  <script src="api-config.js"></script>
   <script>
     // Auth guard and business approval check
     const user = JSON.parse(localStorage.getItem('user'));
@@ -51,7 +52,7 @@
 
     async function checkApprovalAndLoadBusiness() {
       try {
-        const res = await fetch(`http://localhost:3000/business/approved/${user.id}`);
+        const res = await fetch(`${API_BASE}/business/approved/${user.id}`);
         const data = await res.json();
         if (!data.hasApprovedBusiness) {
           alert('You must register and have an approved business before accessing this tool.');

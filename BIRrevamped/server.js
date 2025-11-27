@@ -88,29 +88,42 @@ app.post('/login', async (req, res) => {
 // --- Business endpoints ---
 app.post('/business/register', async (req, res) => {
   console.log("'/business/register' endpoint hit.", req.body);
-  const {
-    businessName,
-    businessTin,
-    ownerName,
-    ownerTin,
-    businessType,
-    businessAddress,
-    businessContact,
-    businessEmail,
-    businessRegNum,
-    ownerId
-  } = req.body;
 
-  if (!businessName || !businessTin || !ownerName || !ownerTin || !ownerId) {
-    return res.status(400).json({ 
-      message: 'businessName, businessTin, ownerName, ownerTin, and ownerId are required' 
-    });
+  // Normalize incoming payload to support both older and newer frontend shapes
+  const body = req.body || {};
+  const businessName = body.businessName || body.name || body.bizName || null;
+  const businessTin = body.businessTin || body.tin || body.bizTin || null;
+  const ownerName = body.ownerName || body.owner || null;
+  const ownerTin = body.ownerTin || body.owner_tin || null;
+  const businessType = body.businessType || body.type || null;
+  const businessAddress = body.businessAddress || body.address || null;
+  const businessContact = body.businessContact || body.contact || null;
+  const businessEmail = body.businessEmail || body.email || null;
+  const businessRegNum = body.businessRegNum || body.regNum || null;
+  const ownerId = body.ownerId || body.owner_id || null;
+
+  // Basic validation with clearer messages
+  const missing = [];
+  if (!businessName) missing.push('businessName');
+  if (!businessTin) missing.push('businessTin');
+  if (!ownerName) missing.push('ownerName');
+  if (!ownerTin) missing.push('ownerTin');
+  if (!ownerId) missing.push('ownerId');
+
+  if (missing.length) {
+    console.warn('/business/register validation failed - missing:', missing.join(', '));
+    return res.status(400).json({ message: `Missing required fields: ${missing.join(', ')}` });
   }
 
   try {
+    // Ensure owner exists
     const owner = await prisma.user.findUnique({ where: { id: ownerId } });
-    if (!owner) return res.status(404).json({ message: 'Owner user not found' });
+    if (!owner) {
+      console.warn('/business/register owner not found:', ownerId);
+      return res.status(404).json({ message: 'Owner user not found' });
+    }
 
+    // Create business record
     const business = await prisma.business.create({
       data: {
         businessName,
@@ -127,20 +140,21 @@ app.post('/business/register', async (req, res) => {
       },
     });
 
-    // Update user's approval status to PENDING
-    await prisma.user.update({
-      where: { id: ownerId },
-      data: { businessApprovalStatus: 'PENDING' }
-    });
+    // Update user's approval status to PENDING (safe guard)
+    try {
+      await prisma.user.update({ where: { id: ownerId }, data: { businessApprovalStatus: 'PENDING' } });
+    } catch (uErr) {
+      console.warn('Failed to update user approval status after business create:', uErr.message || uErr);
+    }
 
     res.status(201).json({ message: 'Business registered and awaiting admin approval', business });
   } catch (error) {
     console.error('Error registering business:', error);
-    console.error('Error details:', { code: error.code, message: error.message, meta: error.meta });
-    if (error.code === 'P2002') {
+    // Provide helpful response for unique constraint violations
+    if (error && error.code === 'P2002') {
       return res.status(409).json({ message: 'Business with this TIN or owner TIN already exists.' });
     }
-    res.status(500).json({ message: 'Server error', details: error.message });
+    res.status(500).json({ message: 'Server error', details: error && error.message ? error.message : String(error) });
   }
 });
 
