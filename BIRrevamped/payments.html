@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Payments - BIR eServices</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
   <header>
@@ -92,7 +93,8 @@
 
         const left = document.createElement('div');
         left.style.display='flex'; left.style.alignItems='center'; left.style.gap='12px';
-        const icon = document.createElement('div'); icon.className='action-icon'; icon.textContent = s.form==='2551Q'?'🧾':'📄';
+        const icon = document.createElement('div'); icon.className='action-icon'; 
+        icon.innerHTML = s.form==='2551Q'?'<i class="fas fa-file-invoice-dollar"></i>':'<i class="fas fa-file-contract"></i>';
         const body = document.createElement('div');
         const title = document.createElement('div'); title.style.fontWeight='700'; title.textContent = `${s.form} — ${s.payer||'Unnamed'}`;
         const desc = document.createElement('div'); desc.className='muted'; desc.style.fontSize='0.95rem'; desc.textContent = `Saved: ${new Date(s.createdAt).toLocaleString()}`;
