@@ -711,6 +711,12 @@ footer p{ opacity:0.9; font-weight:500 }
   box-shadow: 0px 8px 15px rgba(46, 229, 157, 0.4);
 }
 
+.small-btn.warning:hover {
+  background-color: #ff9f43;
+  color: #fff;
+  box-shadow: 0px 8px 15px rgba(255, 159, 67, 0.4);
+}
+
 /* ensure the checkbox is larger and aligns nicely */
 .payment-item input[type="checkbox"]{
     width:18px;
