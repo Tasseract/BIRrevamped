@@ -194,6 +194,8 @@
              showStatus('rejected', '<strong>System Error:</strong> API configuration missing. Please refresh.');
              return;
         }
+
+        const payload = {
           businessName: document.getElementById('businessName').value.trim(),
           businessTin: document.getElementById('businessTin').value.trim(),
           ownerName: document.getElementById('ownerName').value.trim(),
