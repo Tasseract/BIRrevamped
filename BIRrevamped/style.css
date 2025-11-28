@@ -102,10 +102,16 @@ nav ul a:hover, .nav-links a:hover{
     background:transparent;
     border:1px solid rgba(15,23,42,0.06);
     padding:8px 14px;
-    border-radius:999px;
+    border-radius:12px;
     text-decoration:none;
     color:var(--muted);
     font-weight:600;
+    transition: all 0.2s ease;
+}
+.signup-btn:hover {
+    background: rgba(2,6,23,0.02);
+    color: #111827;
+    border-color: rgba(15,23,42,0.15);
 }
 
 /* User Profile in Header */
@@ -408,17 +414,19 @@ footer p{ opacity:0.9; font-weight:500 }
 
 .input-group input {
     width: 100%;
-    padding: 12px 14px;
-    border: 1px solid #d1d5db;
-    border-radius: 10px;
+    padding: 12px 16px;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    border-radius: 12px;
     font-size: 1rem;
-    transition: border-color .2s, box-shadow .2s;
+    transition: all .2s ease;
 }
 
 .input-group input:focus {
     outline: none;
     border-color: var(--accent-1);
-    box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.15);
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(0, 102, 255, 0.1);
 }
 
 .input-row {
@@ -436,17 +444,19 @@ footer p{ opacity:0.9; font-weight:500 }
     background: var(--accent-1);
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
     margin-top: 1rem;
-    transition: background-color .2s, transform .2s;
+    transition: background-color .2s, transform .2s, box-shadow .2s;
+    box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
 }
 
 .auth-button:hover {
     background: #0059dd;
     transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 102, 255, 0.3);
 }
 
 .auth-footer {
@@ -462,7 +472,8 @@ footer p{ opacity:0.9; font-weight:500 }
 }
 
 .auth-footer a:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    color: #004bb5;
 }
 
 /* Payments / Transactions layout fixes */

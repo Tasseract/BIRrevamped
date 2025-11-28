@@ -55,61 +55,67 @@
   </nav>
 
   <main class="auth-container">
-    <section class="auth-section">
+    <section class="auth-box" style="max-width: 600px;">
       <h1>Register Business</h1>
-      <p>Complete your business registration to access BIR tools and services.</p>
+      <p class="muted" style="margin-bottom: 24px;">Complete your business registration to access BIR tools and services.</p>
 
       <div id="status-container" class="status-container"></div>
 
-      <form id="register-business-form" class="auth-form">
-        <div class="form-group">
-          <label for="businessName">Business Name *</label>
-          <input type="text" id="businessName" name="businessName" placeholder="Enter your business name" required>
+      <form id="register-business-form">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="input-group">
+            <label for="businessName">Business Name *</label>
+            <input type="text" id="businessName" name="businessName" placeholder="Enter your business name" required>
+            </div>
+
+            <div class="input-group">
+            <label for="businessTin">Business TIN *</label>
+            <input type="text" id="businessTin" name="businessTin" placeholder="Enter TIN" required>
+            </div>
         </div>
 
-        <div class="form-group">
-          <label for="businessTin">Business TIN *</label>
-          <input type="text" id="businessTin" name="businessTin" placeholder="Enter TIN" required>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="input-group">
+            <label for="ownerName">Owner Name *</label>
+            <input type="text" id="ownerName" name="ownerName" placeholder="Enter owner name" required>
+            </div>
+
+            <div class="input-group">
+            <label for="ownerTin">Owner TIN *</label>
+            <input type="text" id="ownerTin" name="ownerTin" placeholder="Enter owner TIN" required>
+            </div>
         </div>
 
-        <div class="form-group">
-          <label for="ownerName">Owner Name *</label>
-          <input type="text" id="ownerName" name="ownerName" placeholder="Enter owner name" required>
-        </div>
-
-        <div class="form-group">
-          <label for="ownerTin">Owner TIN *</label>
-          <input type="text" id="ownerTin" name="ownerTin" placeholder="Enter owner TIN" required>
-        </div>
-
-        <div class="form-group">
+        <div class="input-group">
           <label for="businessType">Business Type</label>
           <input type="text" id="businessType" name="businessType" placeholder="e.g., Corporation, Partnership">
         </div>
 
-        <div class="form-group">
+        <div class="input-group">
           <label for="businessAddress">Business Address</label>
           <input type="text" id="businessAddress" name="businessAddress" placeholder="Enter business address">
         </div>
 
-        <div class="form-group">
-          <label for="businessContact">Business Contact</label>
-          <input type="tel" id="businessContact" name="businessContact" placeholder="Enter contact number">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="input-group">
+            <label for="businessContact">Business Contact</label>
+            <input type="tel" id="businessContact" name="businessContact" placeholder="Enter contact number">
+            </div>
+
+            <div class="input-group">
+            <label for="businessEmail">Business Email</label>
+            <input type="email" id="businessEmail" name="businessEmail" placeholder="Enter email address">
+            </div>
         </div>
 
-        <div class="form-group">
-          <label for="businessEmail">Business Email</label>
-          <input type="email" id="businessEmail" name="businessEmail" placeholder="Enter email address">
-        </div>
-
-        <div class="form-group">
+        <div class="input-group">
           <label for="businessRegNum">Business Registration Number</label>
           <input type="text" id="businessRegNum" name="businessRegNum" placeholder="Enter registration number">
         </div>
 
-        <div class="button-group">
-          <a href="dashboard.html" class="signup-btn" style="text-decoration:none;display:flex;align-items:center;">Cancel</a>
-          <button type="submit" class="auth-button">Submit Registration</button>
+        <div class="button-group" style="display: flex; gap: 12px; margin-top: 24px; align-items: center;">
+          <a href="dashboard.html" class="signup-btn" style="text-decoration:none; display:flex; align-items:center; justify-content: center; height: 50px; box-sizing: border-box;">Cancel</a>
+          <button type="submit" class="auth-button" style="margin-top: 0; flex: 1;">Submit Registration</button>
         </div>
       </form>
     </section>
