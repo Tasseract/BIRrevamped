@@ -197,7 +197,65 @@ nav ul a:hover, .nav-links a:hover{
     grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
     gap:18px;
     margin-top:18px;
+    justify-items: center; /* Center the cards in the grid */
 }
+
+/* New Menu Card Style */
+.menu-card {
+  box-sizing: border-box;
+  width: 190px;
+  height: 254px;
+  background: rgba(217, 217, 217, 0.58);
+  border: 1px solid white;
+  box-shadow: 12px 17px 51px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(6px);
+  border-radius: 17px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.5s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  font-weight: bolder;
+  color: black;
+  text-decoration: none;
+  padding: 20px;
+  gap: 16px;
+}
+
+.menu-card:hover {
+  border: 1px solid black;
+  transform: scale(1.05);
+}
+
+.menu-card:active {
+  transform: scale(0.95) rotateZ(1.7deg);
+}
+
+/* Adjust inner content for menu-card */
+.menu-card .action-icon {
+    background: transparent;
+    box-shadow: none;
+    width: auto;
+    height: auto;
+    font-size: 2.5rem;
+    color: black;
+    margin-bottom: 0;
+}
+
+.menu-card .action-body h3 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.menu-card .action-body .muted {
+    color: #333; /* Darker text for better contrast on gray bg */
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
 .action-card{
     display:flex;
     align-items:center;
