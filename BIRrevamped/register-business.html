@@ -117,6 +117,12 @@
 
   <script src="api-config.js"></script>
   <script>
+    // Ensure API_BASE is defined
+    if (typeof API_BASE === 'undefined') {
+      console.error('API_BASE is not defined. Check api-config.js');
+      alert('Configuration error: API_BASE is missing. Please check the console.');
+    }
+
     // Auth guard
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user) {
@@ -145,6 +151,7 @@
 
     // Check registration status for current user
     async function checkRegistrationStatus() {
+      if (typeof API_BASE === 'undefined') return;
       try {
         const res = await fetch(`${API_BASE}/businesses?ownerId=${user.id}`);
         const data = await res.json();
@@ -180,8 +187,13 @@
     if (registerForm) {
       registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        e.stopPropagation(); // Stop event bubbling
+        console.log('Form submission intercepted');
 
-        const payload = {
+        if (typeof API_BASE === 'undefined') {
+             showStatus('rejected', '<strong>System Error:</strong> API configuration missing. Please refresh.');
+             return;
+        }
           businessName: document.getElementById('businessName').value.trim(),
           businessTin: document.getElementById('businessTin').value.trim(),
           ownerName: document.getElementById('ownerName').value.trim(),
@@ -227,6 +239,8 @@
 
         try {
           console.log('Submitting payload:', payload);
+          if (typeof API_BASE === 'undefined') throw new Error('API_BASE is not defined');
+          
           const res = await fetch(`${API_BASE}/business/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

@@ -46,7 +46,12 @@
     });
 
     async function fetchData(){
+      if (typeof API_BASE === 'undefined') {
+        alert('API configuration missing.');
+        return;
+      }
       try{
+        console.log('Fetching admin data from', API_BASE);
         const [usersRes, bizRes] = await Promise.all([
           fetch(`${API_BASE}/admin/users`),
           fetch(`${API_BASE}/admin/businesses`)

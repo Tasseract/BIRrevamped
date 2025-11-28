@@ -145,6 +145,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Register Business handler ---
+    /* 
+    // Commented out because this logic is handled in register-business.html with different IDs
     if (registerForm) {
         registerForm.addEventListener('submit', async (ev) => {
             ev.preventDefault();
@@ -180,6 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    */
 });
 
 // Simulation and transaction server communication functions
