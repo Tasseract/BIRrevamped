@@ -70,7 +70,7 @@
         const row = document.createElement('div'); row.className='action-card'; row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center';
         const left = document.createElement('div'); left.innerHTML = `<div style="font-weight:700">${u.firstName} ${u.lastName}</div><div class='muted' style='font-size:0.95rem'>${u.email} • TIN ${u.tin}</div>`;
         const right = document.createElement('div');
-        const del = document.createElement('button'); del.textContent='Delete User'; del.className='signup-btn'; del.type='button';
+        const del = document.createElement('button'); del.textContent='Delete User'; del.className='small-btn danger'; del.type='button';
         del.addEventListener('click', async ()=>{
           if(!confirm('Delete user and related data?')) return;
           try{
@@ -121,18 +121,14 @@
         
         const approve = document.createElement('button'); 
         approve.textContent='Approve'; 
-        approve.className='auth-button'; 
+        approve.className='small-btn primary'; 
         approve.type='button';
-        approve.style.padding = '6px 12px';
-        approve.style.fontSize = '0.9rem';
         approve.disabled = b.status === 'APPROVED';
         
         const reject = document.createElement('button'); 
         reject.textContent='Reject'; 
-        reject.className='signup-btn'; 
+        reject.className='small-btn danger'; 
         reject.type='button';
-        reject.style.padding = '6px 12px';
-        reject.style.fontSize = '0.9rem';
         reject.disabled = b.status === 'REJECTED';
         
         approve.addEventListener('click', async ()=>{

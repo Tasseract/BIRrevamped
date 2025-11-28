@@ -64,7 +64,7 @@
       // actions container with fixed width to keep the button positioned to the side
       const actionsColumn = document.createElement('div'); actionsColumn.style.minWidth = '160px'; actionsColumn.style.display='flex'; actionsColumn.style.alignItems='center'; actionsColumn.style.justifyContent='center';
       const actions = document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px';
-      const printBtn = document.createElement('button'); printBtn.textContent='Print / Download'; printBtn.className='auth-button'; printBtn.style.padding='6px 8px'; printBtn.style.fontSize='0.85rem';
+      const printBtn = document.createElement('button'); printBtn.textContent='Print / Download'; printBtn.className='small-btn primary';
       printBtn.style.whiteSpace = 'nowrap';
       actions.appendChild(printBtn);
       actionsColumn.appendChild(actions);

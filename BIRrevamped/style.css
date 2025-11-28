@@ -86,35 +86,66 @@ nav ul a:hover, .nav-links a:hover{
     align-items:center;
     gap:10px;
 }
-.login-btn{
-    background:var(--accent-1);
-    color:white !important;
-    padding:10px 20px;
-    border-radius:12px;
-    font-weight:700;
-    box-shadow:0 8px 20px rgba(6,57,255,0.08);
-    text-decoration:none;
-    transition:transform .18s ease, box-shadow .18s ease;
+.login-btn {
+  padding: 1.3em 3em;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  color: #000;
+  background-color: #fff;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
-.login-btn:hover{ transform:translateY(-3px); box-shadow:0 18px 40px rgba(3,102,255,0.12) }
 
-.signup-btn{
-    background:transparent;
-    border:1px solid rgba(15,23,42,0.06);
-    padding:10px 20px;
-    border-radius:12px;
-    text-decoration:none;
-    color:var(--muted);
-    font-weight:600;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.login-btn:hover {
+  background-color: #23c483;
+  box-shadow: 0px 15px 20px rgba(46, 229, 157, 0.4);
+  color: #fff;
+  transform: translateY(-7px);
 }
+
+.login-btn:active {
+  transform: translateY(-1px);
+}
+
+.signup-btn {
+  padding: 1.3em 3em;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  color: #000;
+  background-color: #fff;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
 .signup-btn:hover {
-    background: rgba(2,6,23,0.02);
-    color: #111827;
-    border-color: rgba(15,23,42,0.15);
+  background-color: #ff5f5f;
+  box-shadow: 0px 15px 20px rgba(255, 95, 95, 0.4);
+  color: #fff;
+  transform: translateY(-7px);
+}
+
+.signup-btn:active {
+  transform: translateY(-1px);
 }
 
 /* User Profile in Header */
@@ -130,20 +161,34 @@ nav ul a:hover, .nav-links a:hover{
 }
 
 .logout-btn {
-    background: transparent;
-    border: 1px solid #d1d5db;
-    padding: 10px 20px;
-    border-radius: 12px;
-    text-decoration: none;
-    color: var(--muted);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all .2s;
+  padding: 1.3em 3em;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  color: #000;
+  background-color: #fff;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
 
 .logout-btn:hover {
-    border-color: #b1b5bb;
-    color: #111827;
+  background-color: #ff5f5f;
+  box-shadow: 0px 15px 20px rgba(255, 95, 95, 0.4);
+  color: #fff;
+  transform: translateY(-7px);
+}
+
+.logout-btn:active {
+  transform: translateY(-1px);
 }
 
 /* Dashboard action cards */
@@ -233,18 +278,36 @@ nav ul a:hover, .nav-links a:hover{
     margin-bottom:1.25rem;
 }
 
-.cta-button{
-    display:inline-block;
-    padding:12px 22px;
-    background:var(--accent-1);
-    color:white;
-    border-radius:12px;
-    text-decoration:none;
-    font-weight:700;
-    box-shadow:0 12px 30px rgba(0,122,255,0.12);
-    transition:transform .18s ease, box-shadow .18s ease;
+.cta-button {
+  padding: 1.3em 3em;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  color: #000;
+  background-color: #fff;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
-.cta-button:hover{ transform:translateY(-3px); box-shadow:0 26px 60px rgba(0,122,255,0.16) }
+
+.cta-button:hover {
+  background-color: #23c483;
+  box-shadow: 0px 15px 20px rgba(46, 229, 157, 0.4);
+  color: #fff;
+  transform: translateY(-7px);
+}
+
+.cta-button:active {
+  transform: translateY(-1px);
+}
 
 .hero-buttons {
     display: flex;
@@ -253,16 +316,11 @@ nav ul a:hover, .nav-links a:hover{
 }
 
 .cta-button.secondary {
-    background: transparent;
-    color: var(--accent-1);
-    border: 1px solid rgba(0, 102, 255, 0.2);
-    box-shadow: none;
+    /* Universal style applied */
 }
 
 .cta-button.secondary:hover {
-    background: rgba(0, 102, 255, 0.05);
-    box-shadow: none;
-    transform: translateY(-2px);
+    /* Universal hover applied */
 }
 
 /* Features */
@@ -438,32 +496,40 @@ footer p{ opacity:0.9; font-weight:500 }
 }
 
 .input-row .input-group {
+    flex: 1;
+}
+
 .auth-button {
-    width: 100%;
-    padding: 12px 20px;
-    background: var(--accent-1);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 1rem;
-    transition: background-color .2s, transform .2s, box-shadow .2s;
-    box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-}   margin-top: 1rem;
-    transition: background-color .2s, transform .2s, box-shadow .2s;
-    box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
+  width: 100%;
+  padding: 1.3em 3em;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  color: #000;
+  background-color: #fff;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  margin-top: 1rem;
 }
 
 .auth-button:hover {
-    background: #0059dd;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 102, 255, 0.3);
+  background-color: #23c483;
+  box-shadow: 0px 15px 20px rgba(46, 229, 157, 0.4);
+  color: #fff;
+  transform: translateY(-7px);
+}
+
+.auth-button:active {
+  transform: translateY(-1px);
 }
 
 .auth-footer {
@@ -543,36 +609,41 @@ footer p{ opacity:0.9; font-weight:500 }
     display:flex;
     gap:8px;
 /* small rounded buttons used in payments */
-.small-btn{
-    --btn-bg: #fff;
-    --btn-border: rgba(15,23,42,0.06);
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    padding:8px 12px;
-    border-radius:8px;
-    background:var(--btn-bg);
-    border:1px solid var(--btn-border);
-    color:#0b1220;
-    font-weight:600;
-    cursor:pointer;
-    transition:transform .12s ease, box-shadow .12s ease;
-}   color:#0b1220;
-    font-weight:600;
-    cursor:pointer;
-    transition:transform .12s ease, box-shadow .12s ease;
+.small-btn {
+  padding: 0.8em 1.5em;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  color: #000;
+  background-color: #fff;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
-.small-btn:hover{ transform:translateY(-2px); box-shadow:0 8px 20px rgba(6,24,64,0.06) }
 
-.small-btn.danger{
-    background:transparent;
-    border:1px solid rgba(239,68,68,0.12);
-    color:#b91c1c;
+.small-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.15);
 }
-.small-btn.primary{
-    background:var(--accent-1);
-    color:#fff;
-    border:1px solid rgba(3,102,255,0.12);
+
+.small-btn.danger:hover {
+  background-color: #ff5f5f;
+  color: #fff;
+  box-shadow: 0px 8px 15px rgba(255, 95, 95, 0.4);
+}
+
+.small-btn.primary:hover {
+  background-color: #23c483;
+  color: #fff;
+  box-shadow: 0px 8px 15px rgba(46, 229, 157, 0.4);
 }
 
 /* ensure the checkbox is larger and aligns nicely */

@@ -119,17 +119,13 @@
 
   const editBtn = document.createElement('button');
   editBtn.textContent = 'Edit';
-  editBtn.className = 'auth-button';
-  editBtn.style.padding = '6px 8px';
-  editBtn.style.fontSize = '0.85rem';
+  editBtn.className = 'small-btn primary';
   editBtn.type = 'button';
   editBtn.style.cursor = 'pointer';
 
   const delBtn = document.createElement('button');
   delBtn.textContent = 'Delete';
-  delBtn.className = 'signup-btn';
-  delBtn.style.padding = '6px 8px';
-  delBtn.style.fontSize = '0.85rem';
+  delBtn.className = 'small-btn danger';
   delBtn.type = 'button';
   delBtn.style.cursor = 'pointer';
   delBtn.style.pointerEvents = 'auto';
@@ -244,7 +240,7 @@
       <div style="background:var(--bg);border-radius:12px;padding:20px;max-width:680px;width:100%;box-shadow:0 12px 40px rgba(2,6,23,0.3);">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
           <h3 style="margin:0">Edit Simulation</h3>
-          <button id="edit-close" class="signup-btn" style="padding:6px 8px">Close</button>
+          <button id="edit-close" class="small-btn">Close</button>
         </div>
         <div style="display:flex;gap:16px;flex-wrap:wrap">
           <div style="flex:1 1 320px">
@@ -269,8 +265,8 @@
         </div>
 
         <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">
-          <button id="edit-save" class="auth-button" style="padding:8px 12px">Save</button>
-          <button id="edit-cancel" class="signup-btn" style="padding:8px 12px">Cancel</button>
+          <button id="edit-save" class="auth-button">Save</button>
+          <button id="edit-cancel" class="signup-btn">Cancel</button>
         </div>
       </div>
     `;
