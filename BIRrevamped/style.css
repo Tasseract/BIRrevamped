@@ -234,6 +234,13 @@ nav ul a:hover, .nav-links a:hover{
   transform: scale(0.95) rotateZ(1.7deg);
 }
 
+.menu-card.wide {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  min-height: 254px;
+}
+
 /* Adjust inner content for menu-card */
 .menu-card .action-icon {
     background: transparent;
