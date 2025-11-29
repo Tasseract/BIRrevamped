@@ -12,6 +12,7 @@ const saltRounds = 10;
 // Configure CORS to allow all origins (safe for demo/testing)
 app.use(cors());
 app.use(express.json());
+app.use(express.static('.')); // Serve static files from the current directory
 
 app.post('/signup', async (req, res) => {
     console.log("'/signup' endpoint hit."); // Checkpoint A: Did the request reach the server?
