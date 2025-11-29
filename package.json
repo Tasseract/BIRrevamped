@@ -8,8 +8,8 @@
     "prisma": "dotenv -- prisma",
     "start": "node server.js",
     "postinstall": "echo Skipping prisma generate"
-    ,"generate-api-config": "node scripts/generate-api-config.js",
-    "build": "node scripts/generate-api-config.js"
+    "generate-api-config": "node scripts/generate-api-config.js",
+    "build": "node scripts/generate-api-config.js && node scripts/prepare-vercel.js"
   },
   "dependencies": {
     "@prisma/client": "^6.18.0",
