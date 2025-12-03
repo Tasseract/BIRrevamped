@@ -98,16 +98,38 @@
         header.style.display='flex'; 
         header.style.justifyContent='space-between'; 
         header.style.alignItems='center';
+        let detailsHtml = `
+          <div style="font-weight:700;font-size:1.05rem">${b.businessName}</div>
+          <div class='muted' style='font-size:0.9rem;margin-top:4px'>
+            <strong>TIN:</strong> ${b.businessTin}<br>
+            <strong>Type:</strong> ${b.registrationType || 'N/A'}<br>
+            <strong>Line of Business:</strong> ${b.lineOfBusiness || 'N/A'}<br>
+            <strong>Address:</strong> ${b.businessAddress || 'N/A'}<br>
+            <strong>Contact:</strong> ${b.businessContact || 'N/A'} • ${b.businessEmail || 'N/A'}<br>
+        `;
+
+        if (b.registrationType === 'INDIVIDUAL') {
+            detailsHtml += `
+                <div style="margin-top:4px; padding-top:4px; border-top:1px dashed #ccc;">
+                    <strong>Owner:</strong> ${b.ownerName} (TIN: ${b.ownerTin})<br>
+                    <strong>Civil Status:</strong> ${b.civilStatus || 'N/A'} • <strong>Citizenship:</strong> ${b.citizenship || 'N/A'}
+                </div>
+            `;
+        } else if (b.registrationType === 'NON_INDIVIDUAL') {
+            detailsHtml += `
+                <div style="margin-top:4px; padding-top:4px; border-top:1px dashed #ccc;">
+                    <strong>Org Type:</strong> ${b.organizationType || 'N/A'}<br>
+                    <strong>SEC/CDA No:</strong> ${b.secRegNum || 'N/A'}<br>
+                    <strong>Auth Rep:</strong> ${b.authorizedRep || 'N/A'}
+                </div>
+            `;
+        }
+
+        detailsHtml += `</div>`;
+
         header.innerHTML = `
           <div style="flex:1">
-            <div style="font-weight:700;font-size:1.05rem">${b.businessName}</div>
-            <div class='muted' style='font-size:0.9rem;margin-top:4px'>
-              Business TIN: ${b.businessTin}<br>
-              Owner: ${b.ownerName} (TIN: ${b.ownerTin})<br>
-              Type: ${b.businessType || 'N/A'}<br>
-              Address: ${b.businessAddress || 'N/A'}<br>
-              Contact: ${b.businessContact || 'N/A'}
-            </div>
+            ${detailsHtml}
           </div>
           <div style="padding:6px 12px;border-radius:6px;background:${statusBadgeColor};color:${statusBadgeTextColor};font-weight:600;font-size:0.85rem;white-space:nowrap;margin-left:12px">
             ${b.status}

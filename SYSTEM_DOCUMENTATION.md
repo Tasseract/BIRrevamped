@@ -8,7 +8,7 @@ The system is built with a **"Mobile-First"** and **"Apple-inspired"** design ph
 ### Tech Stack
 *   **Frontend:** HTML5, CSS3 (Custom Variables, Flexbox/Grid, Animations), Vanilla JavaScript.
 *   **Backend:** Node.js, Express.js.
-*   **Database:** PostgreSQL (via Prisma ORM).
+*   **Database:** PostgreSQL (via Prisma ORM translated into railway).
 *   **Deployment:** Vercel (Frontend/Static), Railway (Database/Backend).
 
 ---
@@ -36,7 +36,7 @@ The system is built with a **"Mobile-First"** and **"Apple-inspired"** design ph
 
 ---
 
-## 3. System Workflow
+## 3. System Workflow and User Journey
 
 1.  **Landing Page (`index.html`):**
     *   Users arrive at the landing page featuring the "Welcome" hero section and feature highlights.
@@ -50,10 +50,10 @@ The system is built with a **"Mobile-First"** and **"Apple-inspired"** design ph
     *   Upon successful login, the user is directed here.
     *   The system checks `localStorage` for user data to populate the greeting.
     *   Users can click Action Cards to navigate to specific tools (e.g., `form-sim.html`, `payments.html`).
+    *   When the user is new, the only available action card is 'register business'. Once registering a business and approved by an administrator, only then will every other tool be unlocked.
 
 4.  **Web3 Page (`web3-blockchain.html`):**
-    *   A standalone educational page about the system's future roadmap.
-    *   Contains a "Return to Home" button to navigate back.
+    *   A standalone page used for scalable web3 and blockchain solutions.
 
 ---
 

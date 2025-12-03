@@ -90,26 +90,44 @@ app.post('/login', async (req, res) => {
 app.post('/business/register', async (req, res) => {
   console.log("'/business/register' endpoint hit.", req.body);
 
-  // Normalize incoming payload to support both older and newer frontend shapes
   const body = req.body || {};
-  const businessName = body.businessName || body.name || body.bizName || null;
-  const businessTin = body.businessTin || body.tin || body.bizTin || null;
-  const ownerName = body.ownerName || body.owner || null;
-  const ownerTin = body.ownerTin || body.owner_tin || null;
-  const businessType = body.businessType || body.type || null;
-  const businessAddress = body.businessAddress || body.address || null;
-  const businessContact = body.businessContact || body.contact || null;
-  const businessEmail = body.businessEmail || body.email || null;
-  const businessRegNum = body.businessRegNum || body.regNum || null;
-  const ownerId = body.ownerId || body.owner_id || null;
+  
+  // Common
+  const registrationType = body.registrationType || "INDIVIDUAL";
+  const businessName = body.businessName;
+  const businessTin = body.businessTin;
+  const businessAddress = body.businessAddress;
+  const businessEmail = body.businessEmail;
+  const businessContact = body.businessContact;
+  const lineOfBusiness = body.lineOfBusiness;
+  const ownerId = body.ownerId;
 
-  // Basic validation with clearer messages
+  // Individual
+  const ownerName = body.ownerName;
+  const ownerTin = body.ownerTin;
+  const civilStatus = body.civilStatus;
+  const citizenship = body.citizenship;
+  const dateOfBirth = body.dateOfBirth ? new Date(body.dateOfBirth) : null;
+
+  // Non-Individual
+  const organizationType = body.organizationType;
+  const secRegNum = body.secRegNum;
+  const dateOfRegistration = body.dateOfRegistration ? new Date(body.dateOfRegistration) : null;
+  const authorizedRep = body.authorizedRep;
+
+  // Validation
   const missing = [];
   if (!businessName) missing.push('businessName');
   if (!businessTin) missing.push('businessTin');
-  if (!ownerName) missing.push('ownerName');
-  if (!ownerTin) missing.push('ownerTin');
   if (!ownerId) missing.push('ownerId');
+
+  if (registrationType === 'INDIVIDUAL') {
+      if (!ownerName) missing.push('ownerName');
+      if (!ownerTin) missing.push('ownerTin');
+  } else {
+      if (!authorizedRep) missing.push('authorizedRep');
+      if (!organizationType) missing.push('organizationType');
+  }
 
   if (missing.length) {
     console.warn('/business/register validation failed - missing:', missing.join(', '));
@@ -117,25 +135,29 @@ app.post('/business/register', async (req, res) => {
   }
 
   try {
-    // Ensure owner exists
     const owner = await prisma.user.findUnique({ where: { id: ownerId } });
     if (!owner) {
-      console.warn('/business/register owner not found:', ownerId);
       return res.status(404).json({ message: 'Owner user not found' });
     }
 
-    // Create business record
     const business = await prisma.business.create({
       data: {
+        registrationType,
         businessName,
         businessTin,
+        businessAddress,
+        businessEmail,
+        businessContact,
+        lineOfBusiness,
         ownerName,
         ownerTin,
-        businessType,
-        businessAddress,
-        businessContact,
-        businessEmail,
-        businessRegNum,
+        civilStatus,
+        citizenship,
+        dateOfBirth,
+        organizationType,
+        secRegNum,
+        dateOfRegistration,
+        authorizedRep,
         ownerId,
         status: 'PENDING'
       },
@@ -151,11 +173,10 @@ app.post('/business/register', async (req, res) => {
     res.status(201).json({ message: 'Business registered and awaiting admin approval', business });
   } catch (error) {
     console.error('Error registering business:', error);
-    // Provide helpful response for unique constraint violations
-    if (error && error.code === 'P2002') {
-      return res.status(409).json({ message: 'Business with this TIN or owner TIN already exists.' });
+    if (error.code === 'P2002') {
+      return res.status(409).json({ message: 'A business with this TIN already exists.' });
     }
-    res.status(500).json({ message: 'Server error', details: error && error.message ? error.message : String(error) });
+    res.status(500).json({ message: 'Server error', details: error.message });
   }
 });
 

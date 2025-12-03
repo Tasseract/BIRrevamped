@@ -44,15 +44,35 @@ enum BusinessStatus {
 
 model Business {
   id              String         @id @default(uuid())
+  
+  // Registration Type
+  registrationType String        @default("INDIVIDUAL") // INDIVIDUAL or NON_INDIVIDUAL
+
+  // Common Fields
   businessName    String
   businessTin     String         @unique
-  ownerName       String         // Full name of the business owner
-  ownerTin        String         // TIN of the owner (NOT unique - owner can have multiple businesses)
-  businessType    String?        // Sole proprietorship, Corporation, etc.
   businessAddress String?
-  businessContact String?        // Phone/Contact number
   businessEmail   String?
+  businessContact String?
+  lineOfBusiness  String?        // PSIC
+  
+  // Individual Specific
+  ownerName       String?        // Full name of the business owner (Trade name owner)
+  ownerTin        String?        // TIN of the owner
+  civilStatus     String?
+  citizenship     String?
+  dateOfBirth     DateTime?
+
+  // Non-Individual Specific
+  organizationType String?       // Corporation, Partnership, etc.
+  secRegNum       String?        // SEC or CDA Number
+  dateOfRegistration DateTime?
+  authorizedRep   String?        // Name of authorized representative
+
+  // Legacy / General
+  businessType    String?        // Sole proprietorship, Corporation, etc.
   businessRegNum  String?        // BIR registration number
+
   status          BusinessStatus @default(PENDING)
   owner           User           @relation(fields: [ownerId], references: [id])
   ownerId         String

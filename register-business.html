@@ -35,6 +35,18 @@
     .form-group input.error {
       border-color: #e63946 !important;
     }
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        color: #333;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+    }
+    .hidden {
+        display: none;
+    }
   </style>
 </head>
 <body>
@@ -55,230 +67,231 @@
   </nav>
 
   <main class="auth-container">
-    <section class="auth-box" style="max-width: 600px;">
+    <section class="auth-box" style="max-width: 800px;">
       <h1>Register Business</h1>
       <p class="muted" style="margin-bottom: 24px;">Complete your business registration to access BIR tools and services.</p>
 
       <div id="status-container" class="status-container"></div>
 
       <form id="register-business-form">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div class="input-group">
-            <label for="businessName">Business Name *</label>
-            <input type="text" id="businessName" name="businessName" placeholder="Enter your business name" required>
-            </div>
-
-            <div class="input-group">
-            <label for="businessTin">Business TIN *</label>
-            <input type="text" id="businessTin" name="businessTin" placeholder="Enter TIN" required>
-            </div>
+        
+        <!-- Registration Type Selection -->
+        <div class="input-group">
+            <label for="registrationType">Registration Type *</label>
+            <select id="registrationType" name="registrationType" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc;">
+                <option value="INDIVIDUAL">Individual (Sole Proprietorship / Professional)</option>
+                <option value="NON_INDIVIDUAL">Non-Individual (Corporation / Partnership)</option>
+            </select>
         </div>
 
+        <!-- Common Fields -->
+        <div class="section-title">Business Information</div>
+        
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
             <div class="input-group">
-            <label for="ownerName">Owner Name *</label>
-            <input type="text" id="ownerName" name="ownerName" placeholder="Enter owner name" required>
+                <label for="businessName">Business Name / Trade Name *</label>
+                <input type="text" id="businessName" name="businessName" placeholder="Enter registered business name" required>
             </div>
 
             <div class="input-group">
-            <label for="ownerTin">Owner TIN *</label>
-            <input type="text" id="ownerTin" name="ownerTin" placeholder="Enter owner TIN" required>
+                <label for="businessTin">Business TIN *</label>
+                <input type="text" id="businessTin" name="businessTin" placeholder="Enter Business TIN" required>
             </div>
         </div>
 
         <div class="input-group">
-          <label for="businessType">Business Type</label>
-          <input type="text" id="businessType" name="businessType" placeholder="e.g., Corporation, Partnership">
+            <label for="lineOfBusiness">Line of Business (PSIC) *</label>
+            <input type="text" id="lineOfBusiness" name="lineOfBusiness" placeholder="e.g., Retail, IT Services" required>
         </div>
 
         <div class="input-group">
-          <label for="businessAddress">Business Address</label>
-          <input type="text" id="businessAddress" name="businessAddress" placeholder="Enter business address">
+            <label for="businessAddress">Registered Address *</label>
+            <input type="text" id="businessAddress" name="businessAddress" placeholder="Enter complete business address" required>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
             <div class="input-group">
-            <label for="businessContact">Business Contact</label>
-            <input type="tel" id="businessContact" name="businessContact" placeholder="Enter contact number">
+                <label for="businessEmail">Business Email Address *</label>
+                <input type="email" id="businessEmail" name="businessEmail" placeholder="email@business.com" required>
             </div>
-
             <div class="input-group">
-            <label for="businessEmail">Business Email</label>
-            <input type="email" id="businessEmail" name="businessEmail" placeholder="Enter email address">
+                <label for="businessContact">Contact Number *</label>
+                <input type="text" id="businessContact" name="businessContact" placeholder="Mobile or Landline" required>
             </div>
         </div>
 
-        <div class="input-group">
-          <label for="businessRegNum">Business Registration Number</label>
-          <input type="text" id="businessRegNum" name="businessRegNum" placeholder="Enter registration number">
+        <!-- Individual Specific Fields -->
+        <div id="individual-fields">
+            <div class="section-title">Owner Information</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="input-group">
+                    <label for="ownerName">Owner's Full Name *</label>
+                    <input type="text" id="ownerName" name="ownerName" placeholder="Last Name, First Name, MI">
+                </div>
+                <div class="input-group">
+                    <label for="ownerTin">Owner's TIN *</label>
+                    <input type="text" id="ownerTin" name="ownerTin" placeholder="Enter Owner TIN">
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+                <div class="input-group">
+                    <label for="dateOfBirth">Date of Birth</label>
+                    <input type="date" id="dateOfBirth" name="dateOfBirth">
+                </div>
+                <div class="input-group">
+                    <label for="civilStatus">Civil Status</label>
+                    <select id="civilStatus" name="civilStatus" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc;">
+                        <option value="">Select...</option>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Widowed">Widowed</option>
+                        <option value="Separated">Separated</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="citizenship">Citizenship</label>
+                    <input type="text" id="citizenship" name="citizenship" placeholder="e.g., Filipino">
+                </div>
+            </div>
         </div>
 
-        <div class="button-group" style="display: flex; gap: 12px; margin-top: 24px; align-items: center;">
-          <a href="dashboard.html" class="signup-btn" style="text-decoration:none; margin-top: 0;">Cancel</a>
-          <button type="submit" class="auth-button" style="margin-top: 0; flex: 1;">Submit Registration</button>
+        <!-- Non-Individual Specific Fields -->
+        <div id="non-individual-fields" class="hidden">
+            <div class="section-title">Organization Details</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="input-group">
+                    <label for="organizationType">Organization Type *</label>
+                    <select id="organizationType" name="organizationType" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc;">
+                        <option value="">Select...</option>
+                        <option value="Corporation">Corporation</option>
+                        <option value="Partnership">Partnership</option>
+                        <option value="Cooperative">Cooperative</option>
+                        <option value="Association">Association</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="secRegNum">SEC / CDA Registration No. *</label>
+                    <input type="text" id="secRegNum" name="secRegNum" placeholder="Enter Registration Number">
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="input-group">
+                    <label for="dateOfRegistration">Date of Registration</label>
+                    <input type="date" id="dateOfRegistration" name="dateOfRegistration">
+                </div>
+                <div class="input-group">
+                    <label for="authorizedRep">Authorized Representative *</label>
+                    <input type="text" id="authorizedRep" name="authorizedRep" placeholder="Full Name of Rep">
+                </div>
+            </div>
         </div>
+
+        <button type="submit" class="auth-button" style="margin-top: 24px;">Submit Registration</button>
       </form>
     </section>
   </main>
 
   <script src="api-config.js"></script>
+  <script src="loader.js"></script>
   <script>
-    // Ensure API_BASE is defined
-    if (typeof API_BASE === 'undefined') {
-      console.error('API_BASE is not defined. Check api-config.js');
-      alert('Configuration error: API_BASE is missing. Please check the console.');
-    }
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) window.location.href = "login.html";
 
-    // Auth guard
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user) {
-      window.location.href = 'login.html';
-    }
+    document.getElementById("reg-logout").addEventListener("click", () => {
+      localStorage.removeItem("user");
+      window.location.href = "index.html";
+    });
 
-    // Logout handler
-    const logoutBtn = document.getElementById('reg-logout');
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('user');
-        window.location.href = 'index.html';
-      });
-    }
+    // Toggle fields based on type
+    const regTypeSelect = document.getElementById("registrationType");
+    const individualFields = document.getElementById("individual-fields");
+    const nonIndividualFields = document.getElementById("non-individual-fields");
 
-    // Helpers for UI status
-    function showStatus(type, message) {
-      const statusContainer = document.getElementById('status-container');
-      const cls = type === 'pending' ? 'status-message pending' : type === 'approved' ? 'status-message approved' : 'status-message rejected';
-      statusContainer.innerHTML = `<div class="${cls}">${message}</div>`;
-    }
+    regTypeSelect.addEventListener("change", () => {
+        if (regTypeSelect.value === "INDIVIDUAL") {
+            individualFields.classList.remove("hidden");
+            nonIndividualFields.classList.add("hidden");
+            
+            // Set required attributes
+            document.getElementById("ownerName").required = true;
+            document.getElementById("ownerTin").required = true;
+            document.getElementById("organizationType").required = false;
+            document.getElementById("secRegNum").required = false;
+            document.getElementById("authorizedRep").required = false;
+        } else {
+            individualFields.classList.add("hidden");
+            nonIndividualFields.classList.remove("hidden");
 
-    function clearStatus() {
-      document.getElementById('status-container').innerHTML = '';
-    }
+            // Set required attributes
+            document.getElementById("ownerName").required = false;
+            document.getElementById("ownerTin").required = false;
+            document.getElementById("organizationType").required = true;
+            document.getElementById("secRegNum").required = true;
+            document.getElementById("authorizedRep").required = true;
+        }
+    });
 
-    // Check registration status for current user
-    async function checkRegistrationStatus() {
-      if (typeof API_BASE === 'undefined') return;
+    // Initial check
+    regTypeSelect.dispatchEvent(new Event("change"));
+
+    // Check existing status
+    async function checkStatus() {
       try {
-        const res = await fetch(`${API_BASE}/businesses?ownerId=${user.id}`);
+        const res = await fetch(`${API_BASE}/business/approved/${user.id}`);
         const data = await res.json();
-        const businesses = data.businesses || [];
+        const container = document.getElementById("status-container");
         
-        if (businesses.length > 0) {
-          const latestBusiness = businesses[0];
-          
-          if (latestBusiness.status === 'PENDING') {
-            showStatus('pending', '<strong>⏳ Pending Approval</strong><br>Your business registration is awaiting admin approval. You will be notified once it is reviewed.');
-            document.getElementById('register-business-form').style.display = 'none';
-          } else if (latestBusiness.status === 'APPROVED') {
-            showStatus('approved', '<strong>✓ Approved</strong><br>Your business registration has been approved! You can now access all tools. Redirecting...');
-            document.getElementById('register-business-form').style.display = 'none';
-            setTimeout(() => {
-              window.location.href = 'dashboard.html';
-            }, 2000);
-          } else if (latestBusiness.status === 'REJECTED') {
-            showStatus('rejected', '<strong>✗ Rejected</strong><br>Your business registration was rejected. Please review the information and try again.');
-          }
+        if (data.hasApprovedBusiness) {
+            container.innerHTML = `<div class="status-message approved">
+                <strong>Business Registered!</strong><br>
+                Your business "${data.business.businessName}" is approved and active.
+            </div>`;
+        } else if (data.business && data.business.status === "PENDING") {
+             container.innerHTML = `<div class="status-message pending">
+                <strong>Application Pending</strong><br>
+                Your application for "${data.business.businessName}" is currently under review.
+            </div>`;
+        } else if (data.business && data.business.status === "REJECTED") {
+             container.innerHTML = `<div class="status-message rejected">
+                <strong>Application Rejected</strong><br>
+                Please review your details and try again.
+            </div>`;
         }
       } catch (err) {
-        console.error('Error checking registration status:', err);
-        showStatus('rejected', 'Unable to check registration status. Please try again later.');
+        console.error(err);
       }
     }
+    checkStatus();
 
-    // Initial status check
-    checkRegistrationStatus();
+    document.getElementById("register-business-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+      
+      // Add ownerId
+      data.ownerId = user.id;
 
-    // Form submission handler
-    const registerForm = document.getElementById('register-business-form');
-    if (registerForm) {
-      registerForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        e.stopPropagation(); // Stop event bubbling
-        console.log('Form submission intercepted');
+      try {
+        const res = await fetch(`${API_BASE}/business/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
 
-        if (typeof API_BASE === 'undefined') {
-             showStatus('rejected', '<strong>System Error:</strong> API configuration missing. Please refresh.');
-             return;
+        const result = await res.json();
+
+        if (res.ok) {
+          alert("Registration submitted successfully!");
+          window.location.href = "dashboard.html";
+        } else {
+          alert(result.message || "Registration failed");
         }
-
-        const payload = {
-          businessName: document.getElementById('businessName').value.trim(),
-          businessTin: document.getElementById('businessTin').value.trim(),
-          ownerName: document.getElementById('ownerName').value.trim(),
-          ownerTin: document.getElementById('ownerTin').value.trim(),
-          businessType: document.getElementById('businessType').value.trim(),
-          businessAddress: document.getElementById('businessAddress').value.trim(),
-          businessContact: document.getElementById('businessContact').value.trim(),
-          businessEmail: document.getElementById('businessEmail').value.trim() || null,
-          businessRegNum: document.getElementById('businessRegNum').value.trim() || null,
-          ownerId: user.id
-        };
-
-        // Client-side validation for required fields
-        const requiredFields = [
-          { id: 'businessName', label: 'Business Name' },
-          { id: 'businessTin', label: 'Business TIN' },
-          { id: 'ownerName', label: 'Owner Name' },
-          { id: 'ownerTin', label: 'Owner TIN' }
-        ];
-
-        const missing = requiredFields.filter(f => !payload[f.id] || payload[f.id].length === 0).map(f => f.label);
-
-        // Clear previous highlights
-        requiredFields.forEach(f => document.getElementById(f.id).style.borderColor = '');
-
-        if (missing.length) {
-          // Highlight missing fields
-          requiredFields.forEach(f => {
-            if (missing.includes(f.label)) {
-              document.getElementById(f.id).style.borderColor = '#e63946';
-            }
-          });
-          showStatus('rejected', `<strong>Missing required fields:</strong> ${missing.join(', ')}`);
-          return;
-        }
-
-        // Disable submit button to prevent double-posts
-        const submitBtn = registerForm.querySelector('button[type="submit"]');
-        submitBtn.disabled = true;
-        const originalText = submitBtn.textContent;
-        submitBtn.textContent = 'Submitting...';
-        clearStatus();
-
-        try {
-          console.log('Submitting payload:', payload);
-          if (typeof API_BASE === 'undefined') throw new Error('API_BASE is not defined');
-          
-          const res = await fetch(`${API_BASE}/business/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
-          const body = await res.json().catch(() => ({}));
-          console.log('Server response:', { status: res.status, body });
-
-          if (!res.ok) {
-            const errorMsg = body.message || body.details || 'Registration failed';
-            console.error('Registration error:', errorMsg);
-            showStatus('rejected', `<strong>Error:</strong> ${errorMsg}`);
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalText;
-            return;
-          }
-
-          showStatus('pending', '<strong>✔ Business registered successfully!</strong><br>Your registration is pending admin approval. You will be notified once it is reviewed.');
-          // Hide form after success
-          document.getElementById('register-business-form').style.display = 'none';
-          // Refresh status from server
-          setTimeout(checkRegistrationStatus, 1000);
-        } catch (err) {
-          console.error('Network/Fetch error:', err);
-          showStatus('rejected', `<strong>Network error:</strong> ${err.message || err}`);
-          submitBtn.disabled = false;
-          submitBtn.textContent = originalText;
-        }
-      });
-    }
+      } catch (error) {
+        console.error(error);
+        alert("An error occurred. Please try again.");
+      }
+    });
   </script>
 </body>
 </html>
