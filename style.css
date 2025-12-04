@@ -1195,35 +1195,45 @@ select option {
     }
 }
 
-
-/* Business Registration Specifics */
-.form-grid-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+/* Mobile Wizard Steps */
+.wizard-step {
+    display: block; /* Default for desktop */
 }
 
-.form-grid-row-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
+.wizard-nav {
+    display: none; /* Hidden on desktop */
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 10px;
 }
 
-/* Mobile horizontal scroll for business registration */
 @media (max-width: 768px) {
-    .business-reg-wrapper {
-        display: block; /* Override flex centering */
-        overflow-x: auto; /* Allow horizontal scroll */
-        padding: 2rem 1rem;
-        align-items: flex-start;
-        justify-content: flex-start;
-        -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+    .wizard-step {
+        display: none; /* Hidden by default on mobile */
+    }
+    
+    .wizard-step.active {
+        display: block; /* Show active step */
+        animation: fadeIn 0.3s ease;
     }
 
-    .business-reg-box {
-        min-width: 700px; /* Force wide width to prevent wrapping */
-        margin: 0 auto; /* Center if viewport is large enough, otherwise scroll */
-        max-width: none !important; /* Override the inline max-width */
+    .wizard-nav {
+        display: flex;
+    }
+
+    /* Hide the main submit button initially on mobile, show only on last step */
+    #submit-btn-desktop {
+        display: none;
+    }
+    
+    .wizard-submit-mobile {
+        display: block;
+        width: 100%;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 }
 

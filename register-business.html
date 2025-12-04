@@ -69,8 +69,8 @@
     </div>
   </nav>
 
-  <main class="auth-container business-reg-wrapper">
-    <section class="auth-box business-reg-box">
+  <main class="auth-container">
+    <section class="auth-box" style="max-width: 800px;">
       <h1>Register Business</h1>
       <p class="muted" style="margin-bottom: 24px;">Complete your business registration to access BIR tools and services.</p>
 
@@ -78,118 +78,134 @@
 
       <form id="register-business-form">
         
-        <!-- Registration Type Selection -->
-        <div class="input-group">
-            <label for="registrationType">Registration Type *</label>
-            <select id="registrationType" name="registrationType">
-                <option value="INDIVIDUAL">Individual (Sole Proprietorship / Professional)</option>
-                <option value="NON_INDIVIDUAL">Non-Individual (Corporation / Partnership)</option>
-            </select>
-        </div>
-
-        <!-- Common Fields -->
-        <div class="section-title">Business Information</div>
-        
-        <div class="form-grid-row">
+        <!-- Step 1: Registration Type -->
+        <div class="wizard-step active" data-step="1">
             <div class="input-group">
-                <label for="businessName">Business Name / Trade Name *</label>
-                <input type="text" id="businessName" name="businessName" placeholder="Enter registered business name" required>
+                <label for="registrationType">Registration Type *</label>
+                <select id="registrationType" name="registrationType">
+                    <option value="INDIVIDUAL">Individual (Sole Proprietorship / Professional)</option>
+                    <option value="NON_INDIVIDUAL">Non-Individual (Corporation / Partnership)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Step 2: Business Information -->
+        <div class="wizard-step" data-step="2">
+            <div class="section-title">Business Information</div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="input-group">
+                    <label for="businessName">Business Name / Trade Name *</label>
+                    <input type="text" id="businessName" name="businessName" placeholder="Enter registered business name" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="businessTin">Business TIN *</label>
+                    <input type="text" id="businessTin" name="businessTin" placeholder="Enter Business TIN" required>
+                </div>
             </div>
 
             <div class="input-group">
-                <label for="businessTin">Business TIN *</label>
-                <input type="text" id="businessTin" name="businessTin" placeholder="Enter Business TIN" required>
+                <label for="lineOfBusiness">Line of Business (PSIC) *</label>
+                <input type="text" id="lineOfBusiness" name="lineOfBusiness" placeholder="e.g., Retail, IT Services" required>
             </div>
-        </div>
 
-        <div class="input-group">
-            <label for="lineOfBusiness">Line of Business (PSIC) *</label>
-            <input type="text" id="lineOfBusiness" name="lineOfBusiness" placeholder="e.g., Retail, IT Services" required>
-        </div>
-
-        <div class="input-group">
-            <label for="businessAddress">Registered Address *</label>
-            <input type="text" id="businessAddress" name="businessAddress" placeholder="Enter complete business address" required>
-        </div>
-
-        <div class="form-grid-row">
             <div class="input-group">
-                <label for="businessEmail">Business Email Address *</label>
-                <input type="email" id="businessEmail" name="businessEmail" placeholder="email@business.com" required>
+                <label for="businessAddress">Registered Address *</label>
+                <input type="text" id="businessAddress" name="businessAddress" placeholder="Enter complete business address" required>
             </div>
-            <div class="input-group">
-                <label for="businessContact">Contact Number *</label>
-                <input type="text" id="businessContact" name="businessContact" placeholder="Mobile or Landline" required>
-            </div>
-        </div>
 
-        <!-- Individual Specific Fields -->
-        <div id="individual-fields">
-            <div class="section-title">Owner Information</div>
-            <div class="form-grid-row">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                 <div class="input-group">
-                    <label for="ownerName">Owner's Full Name *</label>
-                    <input type="text" id="ownerName" name="ownerName" placeholder="Last Name, First Name, MI">
+                    <label for="businessEmail">Business Email Address *</label>
+                    <input type="email" id="businessEmail" name="businessEmail" placeholder="email@business.com" required>
                 </div>
                 <div class="input-group">
-                    <label for="ownerTin">Owner's TIN *</label>
-                    <input type="text" id="ownerTin" name="ownerTin" placeholder="Enter Owner TIN">
-                </div>
-            </div>
-            <div class="form-grid-row-3">
-                <div class="input-group">
-                    <label for="dateOfBirth">Date of Birth</label>
-                    <input type="date" id="dateOfBirth" name="dateOfBirth">
-                </div>
-                <div class="input-group">
-                    <label for="civilStatus">Civil Status</label>
-                    <select id="civilStatus" name="civilStatus">
-                        <option value="">Select...</option>
-                        <option value="Single">Single</option>
-                        <option value="Married">Married</option>
-                        <option value="Widowed">Widowed</option>
-                        <option value="Separated">Separated</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="citizenship">Citizenship</label>
-                    <input type="text" id="citizenship" name="citizenship" placeholder="e.g., Filipino">
+                    <label for="businessContact">Contact Number *</label>
+                    <input type="text" id="businessContact" name="businessContact" placeholder="Mobile or Landline" required>
                 </div>
             </div>
         </div>
 
-        <!-- Non-Individual Specific Fields -->
-        <div id="non-individual-fields" class="hidden">
-            <div class="section-title">Organization Details</div>
-            <div class="form-grid-row">
-                <div class="input-group">
-                    <label for="organizationType">Organization Type *</label>
-                    <select id="organizationType" name="organizationType">
-                        <option value="">Select...</option>
-                        <option value="Corporation">Corporation</option>
-                        <option value="Partnership">Partnership</option>
-                        <option value="Cooperative">Cooperative</option>
-                        <option value="Association">Association</option>
-                    </select>
+        <!-- Step 3: Specific Information -->
+        <div class="wizard-step" data-step="3">
+            <!-- Individual Specific Fields -->
+            <div id="individual-fields">
+                <div class="section-title">Owner Information</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="input-group">
+                        <label for="ownerName">Owner's Full Name *</label>
+                        <input type="text" id="ownerName" name="ownerName" placeholder="Last Name, First Name, MI">
+                    </div>
+                    <div class="input-group">
+                        <label for="ownerTin">Owner's TIN *</label>
+                        <input type="text" id="ownerTin" name="ownerTin" placeholder="Enter Owner TIN">
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label for="secRegNum">SEC / CDA Registration No. *</label>
-                    <input type="text" id="secRegNum" name="secRegNum" placeholder="Enter Registration Number">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+                    <div class="input-group">
+                        <label for="dateOfBirth">Date of Birth</label>
+                        <input type="date" id="dateOfBirth" name="dateOfBirth">
+                    </div>
+                    <div class="input-group">
+                        <label for="civilStatus">Civil Status</label>
+                        <select id="civilStatus" name="civilStatus">
+                            <option value="">Select...</option>
+                            <option value="Single">Single</option>
+                            <option value="Married">Married</option>
+                            <option value="Widowed">Widowed</option>
+                            <option value="Separated">Separated</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="citizenship">Citizenship</label>
+                        <input type="text" id="citizenship" name="citizenship" placeholder="e.g., Filipino">
+                    </div>
                 </div>
             </div>
-            <div class="form-grid-row">
-                <div class="input-group">
-                    <label for="dateOfRegistration">Date of Registration</label>
-                    <input type="date" id="dateOfRegistration" name="dateOfRegistration">
+
+            <!-- Non-Individual Specific Fields -->
+            <div id="non-individual-fields" class="hidden">
+                <div class="section-title">Organization Details</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="input-group">
+                        <label for="organizationType">Organization Type *</label>
+                        <select id="organizationType" name="organizationType">
+                            <option value="">Select...</option>
+                            <option value="Corporation">Corporation</option>
+                            <option value="Partnership">Partnership</option>
+                            <option value="Cooperative">Cooperative</option>
+                            <option value="Association">Association</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="secRegNum">SEC / CDA Registration No. *</label>
+                        <input type="text" id="secRegNum" name="secRegNum" placeholder="Enter Registration Number">
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label for="authorizedRep">Authorized Representative *</label>
-                    <input type="text" id="authorizedRep" name="authorizedRep" placeholder="Full Name of Rep">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="input-group">
+                        <label for="dateOfRegistration">Date of Registration</label>
+                        <input type="date" id="dateOfRegistration" name="dateOfRegistration">
+                    </div>
+                    <div class="input-group">
+                        <label for="authorizedRep">Authorized Representative *</label>
+                        <input type="text" id="authorizedRep" name="authorizedRep" placeholder="Full Name of Rep">
+                    </div>
                 </div>
             </div>
         </div>
 
-        <button type="submit" class="auth-button" style="margin-top: 24px;">Submit Registration</button>
+        <!-- Desktop Submit Button -->
+        <button type="submit" id="submit-btn-desktop" class="auth-button" style="margin-top: 24px;">Submit Registration</button>
+
+        <!-- Mobile Wizard Navigation -->
+        <div class="wizard-nav">
+            <button type="button" id="prev-btn" class="signup-btn" style="flex:1; display:none;">Back</button>
+            <button type="button" id="next-btn" class="auth-button" style="flex:1;">Next</button>
+            <button type="submit" id="submit-btn-mobile" class="auth-button wizard-submit-mobile" style="flex:1; display:none;">Submit</button>
+        </div>
+
       </form>
     </section>
   </main>
@@ -236,6 +252,72 @@
 
     // Initial check
     regTypeSelect.dispatchEvent(new Event("change"));
+
+    // --- Mobile Wizard Logic ---
+    let currentStep = 1;
+    const totalSteps = 3;
+    const steps = document.querySelectorAll('.wizard-step');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const submitBtnMobile = document.getElementById('submit-btn-mobile');
+
+    function updateWizard() {
+        // Only run logic if we are in mobile view (check if nav is visible)
+        const isMobile = window.getComputedStyle(document.querySelector('.wizard-nav')).display !== 'none';
+        
+        if (!isMobile) return;
+
+        steps.forEach(step => {
+            if (parseInt(step.dataset.step) === currentStep) {
+                step.classList.add('active');
+            } else {
+                step.classList.remove('active');
+            }
+        });
+
+        // Button visibility
+        prevBtn.style.display = currentStep === 1 ? 'none' : 'block';
+        
+        if (currentStep === totalSteps) {
+            nextBtn.style.display = 'none';
+            submitBtnMobile.style.display = 'block';
+        } else {
+            nextBtn.style.display = 'block';
+            submitBtnMobile.style.display = 'none';
+        }
+    }
+
+    nextBtn.addEventListener('click', () => {
+        // Simple validation for current step inputs
+        const currentStepEl = document.querySelector(`.wizard-step[data-step="${currentStep}"]`);
+        const inputs = currentStepEl.querySelectorAll('input, select');
+        let valid = true;
+        
+        inputs.forEach(input => {
+            if (input.hasAttribute('required') && !input.value && !input.closest('.hidden')) {
+                valid = false;
+                input.reportValidity();
+            }
+        });
+
+        if (valid) {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateWizard();
+            }
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (currentStep > 1) {
+            currentStep--;
+            updateWizard();
+        }
+    });
+
+    // Initialize wizard state on load and resize
+    window.addEventListener('resize', updateWizard);
+    updateWizard(); // Initial call
 
     // Check existing status
     async function checkStatus() {
