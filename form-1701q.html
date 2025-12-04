@@ -21,7 +21,7 @@
       <form id="t1701q-form" style="margin-top:18px;">
         <div class="input-group">
           <label for="payer">Taxpayer Name</label>
-          <input id="payer" name="payer" type="text" placeholder="Your name" />
+          <input id="payer" name="payer" type="text" placeholder="Your name" oninput="this.value = this.value.replace(/[0-9]/g, '')" />
         </div>
 
         <div class="input-row">
