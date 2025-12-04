@@ -76,13 +76,68 @@ app.post('/login', async (req, res) => {
         }
 
         // Return minimal user info only
-        const safeUser = { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName };
+        const safeUser = { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, tin: user.tin };
         console.log('Login successful for', email);
         return res.status(200).json({ message: 'Login successful!', user: safeUser });
 
     } catch (error) {
         console.error('Error during login:', error);
         return res.status(500).json({ message: 'An error occurred on the server.' });
+    }
+});
+
+// Get User Details
+app.get('/user/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const user = await prisma.user.findUnique({ where: { id } });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        
+        const safeUser = { 
+            id: user.id, 
+            email: user.email, 
+            firstName: user.firstName, 
+            lastName: user.lastName, 
+            tin: user.tin 
+        };
+        res.json(safeUser);
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Update User Details
+app.put('/user/:id', async (req, res) => {
+    const { id } = req.params;
+    const { firstName, lastName, tin } = req.body;
+    
+    try {
+        const updatedUser = await prisma.user.update({
+            where: { id },
+            data: { 
+                firstName, 
+                lastName, 
+                tin 
+            }
+        });
+        
+        const safeUser = { 
+            id: updatedUser.id, 
+            email: updatedUser.email, 
+            firstName: updatedUser.firstName, 
+            lastName: updatedUser.lastName, 
+            tin: updatedUser.tin 
+        };
+        
+        res.json({ message: 'User updated successfully', user: safeUser });
+    } catch (error) {
+        console.error('Error updating user:', error);
+        // Handle unique constraint violation for TIN if needed
+        if (error.code === 'P2002') {
+            return res.status(409).json({ message: 'TIN already in use.' });
+        }
+        res.status(500).json({ message: 'Server error' });
     }
 });
 

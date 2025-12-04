@@ -301,11 +301,29 @@
     const profileEmailInput = document.getElementById('profile-email');
 
     if (profileTrigger) {
-        profileTrigger.addEventListener('click', () => {
+        profileTrigger.addEventListener('click', async () => {
             // Load current user data
-            const currentUser = JSON.parse(localStorage.getItem('user'));
+            let currentUser = JSON.parse(localStorage.getItem('user'));
+            
             if (currentUser) {
-                profileNameInput.value = currentUser.fullName || '';
+                // Try to fetch fresh data from API
+                try {
+                    const res = await fetch(`${API_BASE}/user/${currentUser.id}`);
+                    if (res.ok) {
+                        currentUser = await res.json();
+                        localStorage.setItem('user', JSON.stringify(currentUser));
+                    }
+                } catch (e) {
+                    console.warn('Could not fetch fresh user data, using cached.');
+                }
+
+                // Handle name display
+                const fName = currentUser.firstName || '';
+                const lName = currentUser.lastName || '';
+                // If we have separate fields, join them. If we have a legacy fullName, use it.
+                const fullName = (fName || lName) ? `${fName} ${lName}`.trim() : (currentUser.fullName || '');
+                
+                profileNameInput.value = fullName;
                 profileTinInput.value = currentUser.tin || '';
                 profileEmailInput.value = currentUser.email || '';
                 profileModal.classList.add('active');
@@ -326,21 +344,46 @@
     }
 
     if (profileSave) {
-        profileSave.addEventListener('click', () => {
+        profileSave.addEventListener('click', async () => {
             const currentUser = JSON.parse(localStorage.getItem('user'));
             if (currentUser) {
-                currentUser.fullName = profileNameInput.value;
-                currentUser.tin = profileTinInput.value;
+                const fullName = profileNameInput.value.trim();
+                // Split name into first and last
+                const nameParts = fullName.split(' ');
+                const firstName = nameParts[0];
+                const lastName = nameParts.slice(1).join(' ') || ''; // Handle single name case
                 
-                // Update localStorage
-                localStorage.setItem('user', JSON.stringify(currentUser));
+                const tin = profileTinInput.value;
                 
-                // Update UI
-                document.getElementById('dashboard-user-name').textContent = currentUser.fullName;
-                
-                // Visual feedback
-                alert('Profile updated successfully!');
-                closeProfile();
+                try {
+                    const res = await fetch(`${API_BASE}/user/${currentUser.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ firstName, lastName, tin })
+                    });
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        const updatedUser = data.user;
+                        
+                        // Update localStorage
+                        localStorage.setItem('user', JSON.stringify(updatedUser));
+                        
+                        // Update UI
+                        const newFullName = `${updatedUser.firstName} ${updatedUser.lastName}`.trim();
+                        document.getElementById('dashboard-user-name').textContent = newFullName;
+                        
+                        // Visual feedback
+                        alert('Profile updated successfully!');
+                        closeProfile();
+                    } else {
+                        const err = await res.json();
+                        alert('Update failed: ' + (err.message || 'Unknown error'));
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert('An error occurred while updating profile.');
+                }
             }
         });
     }
