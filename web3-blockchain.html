@@ -6,11 +6,12 @@
     <title>BIR eServices - Web3 & Blockchain</title>
     <link rel="stylesheet" href="web3-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header>
         <div class="logo">BIR <span style="color: #fff;">x</span> Web3</div>
-        <a href="index.html" class="back-btn">Return to Home</a>
+        <a href="dashboard.html" class="back-btn">Return to Dashboard</a>
     </header>
 
     <main>
@@ -46,6 +47,201 @@
             <h2>A New Era of Accountability</h2>
             <p>By integrating Web3 technologies, the Bureau of Internal Revenue aims to set a global standard for digital governance. We are moving towards a system where corruption is structurally impossible and efficiency is the default.</p>
         </div>
+
+        <!-- Crypto Market Section -->
+        <section class="crypto-market-section" style="margin-top: 4rem;">
+            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2rem;">Live Market Data</h2>
+            <div id="crypto-grid" class="content-grid">
+                <!-- Crypto cards injected here -->
+                <div style="grid-column: 1/-1; text-align: center; padding: 2rem;">Loading market data...</div>
+            </div>
+        </section>
+
+        <!-- Crypto Detail Modal -->
+        <div id="crypto-modal" class="modal-overlay">
+            <div class="glass-panel" style="width: 100%; max-width: 800px; padding: 30px;">
+                <div class="modal-header">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <img id="modal-coin-icon" src="" alt="" style="width: 32px; height: 32px;">
+                        <h2 id="modal-coin-name" style="margin: 0;">Bitcoin</h2>
+                        <span id="modal-coin-symbol" style="background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 700;">BTC</span>
+                    </div>
+                    <button id="close-crypto-modal" class="close-btn" style="color: white;">&times;</button>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
+                    <div>
+                        <div style="font-size: 0.9rem; opacity: 0.7;">Current Price</div>
+                        <div id="modal-coin-price" style="font-size: 2rem; font-weight: 700;">$0.00</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.9rem; opacity: 0.7;">24h Change</div>
+                        <div id="modal-coin-change" style="font-size: 1.2rem; font-weight: 600;">0.00%</div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.2); border-radius: 16px; padding: 20px;">
+                    <canvas id="coinChart"></canvas>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px;">
+                        <div style="font-size: 0.8rem; opacity: 0.7;">Market Cap</div>
+                        <div id="modal-market-cap" style="font-size: 1.1rem; font-weight: 600;">$0</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px;">
+                        <div style="font-size: 0.8rem; opacity: 0.7;">Total Volume</div>
+                        <div id="modal-volume" style="font-size: 1.1rem; font-weight: 600;">$0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // API Key provided by user
+            const API_KEY = 'c09de27597b543c0b50e7a586dfb773c';
+            
+            // Using CoinGecko API (Free tier doesn't strictly require key for basic access, but we'll keep it in mind)
+            // Note: CoinGecko free API has rate limits (10-30 calls/min).
+            const API_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=12&page=1&sparkline=true&price_change_percentage=24h';
+
+            const grid = document.getElementById('crypto-grid');
+            const modal = document.getElementById('crypto-modal');
+            const closeModal = document.getElementById('close-crypto-modal');
+            let chartInstance = null;
+
+            async function fetchMarketData() {
+                try {
+                    const res = await fetch(API_URL);
+                    if (!res.ok) throw new Error('Failed to fetch data');
+                    const data = await res.json();
+                    renderGrid(data);
+                } catch (error) {
+                    console.error(error);
+                    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: #ff6b6b;">Unable to load market data. Please try again later.</div>';
+                }
+            }
+
+            function renderGrid(coins) {
+                grid.innerHTML = '';
+                coins.forEach(coin => {
+                    const card = document.createElement('div');
+                    card.className = 'card crypto-card';
+                    card.style.cursor = 'pointer';
+                    card.style.transition = 'transform 0.2s';
+                    
+                    const isPositive = coin.price_change_percentage_24h >= 0;
+                    const color = isPositive ? '#4ade80' : '#f87171';
+
+                    card.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                            <img src="${coin.image}" alt="${coin.name}" style="width: 32px; height: 32px;">
+                            <div>
+                                <h3 style="margin: 0; font-size: 1.1rem;">${coin.name}</h3>
+                                <span style="font-size: 0.8rem; opacity: 0.7; text-transform: uppercase;">${coin.symbol}</span>
+                            </div>
+                        </div>
+                        <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 4px;">
+                            $${coin.current_price.toLocaleString()}
+                        </div>
+                        <div style="color: ${color}; font-weight: 600; font-size: 0.9rem;">
+                            ${isPositive ? '+' : ''}${coin.price_change_percentage_24h.toFixed(2)}%
+                        </div>
+                    `;
+
+                    card.addEventListener('mouseenter', () => card.style.transform = 'translateY(-5px)');
+                    card.addEventListener('mouseleave', () => card.style.transform = 'translateY(0)');
+                    card.addEventListener('click', () => openModal(coin));
+
+                    grid.appendChild(card);
+                });
+            }
+
+            function openModal(coin) {
+                document.getElementById('modal-coin-icon').src = coin.image;
+                document.getElementById('modal-coin-name').textContent = coin.name;
+                document.getElementById('modal-coin-symbol').textContent = coin.symbol.toUpperCase();
+                document.getElementById('modal-coin-price').textContent = '$' + coin.current_price.toLocaleString();
+                
+                const changeEl = document.getElementById('modal-coin-change');
+                const isPositive = coin.price_change_percentage_24h >= 0;
+                changeEl.textContent = (isPositive ? '+' : '') + coin.price_change_percentage_24h.toFixed(2) + '%';
+                changeEl.style.color = isPositive ? '#4ade80' : '#f87171';
+
+                document.getElementById('modal-market-cap').textContent = '$' + coin.market_cap.toLocaleString();
+                document.getElementById('modal-volume').textContent = '$' + coin.total_volume.toLocaleString();
+
+                renderChart(coin);
+                modal.classList.add('active');
+            }
+
+            function renderChart(coin) {
+                const ctx = document.getElementById('coinChart').getContext('2d');
+                const prices = coin.sparkline_in_7d.price;
+                const isPositive = prices[prices.length - 1] >= prices[0];
+                const color = isPositive ? '#4ade80' : '#f87171';
+
+                if (chartInstance) chartInstance.destroy();
+
+                chartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: prices.map((_, i) => i), // Simple index labels
+                        datasets: [{
+                            label: 'Price (7d)',
+                            data: prices,
+                            borderColor: color,
+                            backgroundColor: (context) => {
+                                const ctx = context.chart.ctx;
+                                const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                                gradient.addColorStop(0, isPositive ? 'rgba(74, 222, 128, 0.2)' : 'rgba(248, 113, 113, 0.2)');
+                                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                                return gradient;
+                            },
+                            borderWidth: 2,
+                            fill: true,
+                            pointRadius: 0,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                                callbacks: {
+                                    label: (context) => '$' + context.raw.toFixed(2)
+                                }
+                            }
+                        },
+                        scales: {
+                            x: { display: false },
+                            y: { 
+                                display: true,
+                                grid: { color: 'rgba(255,255,255,0.05)' },
+                                ticks: { color: 'rgba(255,255,255,0.5)' }
+                            }
+                        },
+                        interaction: {
+                            mode: 'nearest',
+                            axis: 'x',
+                            intersect: false
+                        }
+                    }
+                });
+            }
+
+            closeModal.addEventListener('click', () => modal.classList.remove('active'));
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.classList.remove('active');
+            });
+
+            // Initial load
+            fetchMarketData();
+        </script>
 
         <div class="content-grid">
             <div class="card">
