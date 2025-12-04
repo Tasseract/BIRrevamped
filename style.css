@@ -1011,8 +1011,9 @@ select option {
     border: 1px solid rgba(255, 255, 255, 0.5);
     box-shadow: 0 20px 40px rgba(0,0,0,0.15);
     border-radius: 24px;
-    width: 90%;
-    max-width: 400px;
+    width: auto; /* Allow width to fit content */
+    min-width: 320px; /* Minimum width */
+    max-width: 90%; /* Max width relative to screen */
     padding: 24px;
     transform: scale(0.95);
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -1060,6 +1061,25 @@ select option {
     gap: 10px;
     max-height: 60vh;
     overflow-y: auto;
+    padding-right: 4px; /* Add padding for scrollbar */
+}
+
+/* Custom Scrollbar for Business List */
+.business-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.business-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.business-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.business-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .business-item {
@@ -1072,6 +1092,8 @@ select option {
     display: flex;
     align-items: center;
     gap: 12px;
+    width: 100%; /* Ensure full width */
+    box-sizing: border-box; /* Include padding in width */
 }
 
 .business-item:hover {
