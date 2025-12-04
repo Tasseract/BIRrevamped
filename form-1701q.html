@@ -68,25 +68,24 @@
       window.location.href = 'login.html';
     }
 
-    async function checkApprovalAndLoadBusiness() {
-      try {
-        const res = await fetch(`${API_BASE}/business/approved/${user.id}`);
-        const data = await res.json();
-        if (!data.hasApprovedBusiness) {
-          alert('You must register and have an approved business before accessing this tool.');
-          window.location.href = 'register-business.html';
-          return;
-        }
-        // Load business info and auto-fill
-        if (data.business) {
-          document.getElementById('payer').value = data.business.ownerName;
-        }
-      } catch (err) {
-        console.error('Error checking approval:', err);
+    function loadActiveBusiness() {
+      const activeBusiness = JSON.parse(localStorage.getItem('activeBusiness'));
+      
+      if (!activeBusiness) {
+        alert('No active business selected. Please go to the dashboard and select a business.');
+        window.location.href = 'dashboard.html';
+        return;
+      }
+
+      // Auto-fill based on active business
+      if (activeBusiness.registrationType === 'NON_INDIVIDUAL') {
+          document.getElementById('payer').value = activeBusiness.businessName;
+      } else {
+          document.getElementById('payer').value = activeBusiness.ownerName || activeBusiness.businessName;
       }
     }
 
-    window.addEventListener('load', checkApprovalAndLoadBusiness);
+    window.addEventListener('load', loadActiveBusiness);
 
     function fmt(v){
       return Number(v).toLocaleString(undefined,{style:'currency',currency:'PHP',maximumFractionDigits:2});
@@ -113,9 +112,12 @@
     window.addEventListener('load', recalc);
 
     saveBtn.addEventListener('click', ()=>{
+      const activeBusiness = JSON.parse(localStorage.getItem('activeBusiness'));
       const sim = {
         form:'1701Q',
         payer: document.getElementById('payer').value || null,
+        businessId: activeBusiness ? activeBusiness.id : null,
+        businessName: activeBusiness ? activeBusiness.businessName : null,
         gross: parseFloat(grossInc.value)||0,
         expenses: parseFloat(expenses.value)||0,
         net: parseFloat(net.value)||0,

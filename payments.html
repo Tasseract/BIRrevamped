@@ -96,7 +96,8 @@
         const icon = document.createElement('div'); icon.className='action-icon'; 
         icon.innerHTML = s.form==='2551Q'?'<i class="fas fa-file-invoice-dollar"></i>':'<i class="fas fa-file-contract"></i>';
         const body = document.createElement('div');
-        const title = document.createElement('div'); title.style.fontWeight='700'; title.textContent = `${s.form} — ${s.payer||'Unnamed'}`;
+        const title = document.createElement('div'); title.style.fontWeight='700'; 
+        title.innerHTML = `${s.form} — ${s.payer||'Unnamed'} <span style="font-weight:400; color:var(--muted); font-size:0.85em;">${s.businessName ? '('+s.businessName+')' : ''}</span>`;
         const desc = document.createElement('div'); desc.className='muted'; desc.style.fontSize='0.95rem'; desc.textContent = `Saved: ${new Date(s.createdAt).toLocaleString()}`;
         body.appendChild(title); body.appendChild(desc);
         left.appendChild(icon); left.appendChild(body);

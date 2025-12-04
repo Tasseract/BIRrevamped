@@ -12,6 +12,13 @@
     <nav>
       <a class="logo" href="index.html">BIR eServices</a>
       <div style="flex:1"></div>
+      
+      <!-- Business Selector (Hidden by default) -->
+      <div id="business-selector-container" style="margin-right: 20px; display: none;">
+        <select id="business-selector" style="padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 0.9rem; max-width: 200px;">
+        </select>
+      </div>
+
       <div class="user-profile" id="dashboard-user-profile">
         <img id="user-avatar" src="" alt="avatar" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid rgba(0,0,0,0.06);">
         <div style="display:flex;flex-direction:column;align-items:flex-start;margin-left:8px;">
@@ -93,53 +100,107 @@
       });
 
       // Check if user has approved business
-      async function checkBusinessApproval() {
+      async function loadBusinesses() {
         try {
-          const res = await fetch(`${API_BASE}/business/approved/${user.id}`);
+          const res = await fetch(`${API_BASE}/businesses?ownerId=${user.id}`);
           const data = await res.json();
-          const hasApproved = data.hasApprovedBusiness;
-
-          if (!hasApproved) {
-            // User doesn't have approved business - lock all tools except business registration
-            const actionCards = document.querySelectorAll('.menu-card');
-            actionCards.forEach(card => {
-              const text = card.innerText;
-              // Lock all except "Register a Business"
-              if (!text.includes('Register a Business')) {
-                card.style.opacity = '0.5';
-                card.style.pointerEvents = 'none';
-                card.style.cursor = 'not-allowed';
-                card.style.position = 'relative';
-                
-                // Add overlay message
-                const overlay = document.createElement('div');
-                overlay.style.position = 'absolute';
-                overlay.style.top = '0';
-                overlay.style.left = '0';
-                overlay.style.right = '0';
-                overlay.style.bottom = '0';
-                overlay.style.display = 'flex';
-                overlay.style.alignItems = 'center';
-                overlay.style.justifyContent = 'center';
-                overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-                overlay.style.borderRadius = '8px';
-                overlay.style.fontSize = '0.85rem';
-                overlay.style.fontWeight = '600';
-                overlay.style.color = '#e63946';
-                overlay.style.textAlign = 'center';
-                overlay.style.padding = '16px';
-                overlay.innerHTML = '🔒 Register a business first to unlock this tool';
-                card.style.position = 'relative';
-                card.appendChild(overlay);
-              }
-            });
+          const businesses = data.businesses || [];
+          
+          // Filter approved ones
+          const approvedBusinesses = businesses.filter(b => b.status === 'APPROVED');
+          
+          if (approvedBusinesses.length === 0) {
+            lockTools();
+            localStorage.removeItem('activeBusiness');
+          } else {
+            setupBusinessSelector(approvedBusinesses);
           }
         } catch (err) {
-          console.error('Error checking business approval:', err);
+          console.error('Error loading businesses:', err);
         }
       }
 
-      checkBusinessApproval();
+      function lockTools() {
+        const actionCards = document.querySelectorAll('.menu-card');
+        actionCards.forEach(card => {
+          const text = card.innerText;
+          // Lock all except "Register a Business"
+          if (!text.includes('Register a Business')) {
+            card.style.opacity = '0.5';
+            card.style.pointerEvents = 'none';
+            card.style.cursor = 'not-allowed';
+            card.style.position = 'relative';
+            
+            // Add overlay message
+            const overlay = document.createElement('div');
+            overlay.style.position = 'absolute';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.right = '0';
+            overlay.style.bottom = '0';
+            overlay.style.display = 'flex';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+            overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+            overlay.style.borderRadius = '8px';
+            overlay.style.fontSize = '0.85rem';
+            overlay.style.fontWeight = '600';
+            overlay.style.color = '#e63946';
+            overlay.style.textAlign = 'center';
+            overlay.style.padding = '16px';
+            overlay.innerHTML = '🔒 Register a business first to unlock this tool';
+            card.style.position = 'relative';
+            card.appendChild(overlay);
+          }
+        });
+      }
+
+      function setupBusinessSelector(businesses) {
+        const container = document.getElementById('business-selector-container');
+        const selector = document.getElementById('business-selector');
+        
+        // Determine active business
+        let activeBusiness = JSON.parse(localStorage.getItem('activeBusiness'));
+        
+        // Verify if stored active business still exists and is approved
+        if (activeBusiness) {
+            const stillExists = businesses.find(b => b.id === activeBusiness.id);
+            if (!stillExists) activeBusiness = null;
+        }
+
+        // Default to first if none selected
+        if (!activeBusiness) {
+            activeBusiness = businesses[0];
+            localStorage.setItem('activeBusiness', JSON.stringify(activeBusiness));
+        }
+
+        if (businesses.length > 1) {
+            // Show selector
+            container.style.display = 'block';
+            selector.innerHTML = '';
+            businesses.forEach(b => {
+                const option = document.createElement('option');
+                option.value = b.id;
+                option.textContent = b.businessName;
+                if (b.id === activeBusiness.id) option.selected = true;
+                selector.appendChild(option);
+            });
+
+            selector.addEventListener('change', (e) => {
+                const selectedId = e.target.value;
+                const selected = businesses.find(b => b.id === selectedId);
+                localStorage.setItem('activeBusiness', JSON.stringify(selected));
+                // Visual feedback
+                alert(`Active business switched to: ${selected.businessName}`);
+            });
+        } else {
+            // Only 1 business, hide selector but ensure it's set as active
+            container.style.display = 'none';
+            localStorage.setItem('activeBusiness', JSON.stringify(businesses[0]));
+        }
+      }
+
+      loadBusinesses();
     }
   </script>
 <script src='loader.js'></script>

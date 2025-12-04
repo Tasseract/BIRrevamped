@@ -237,25 +237,19 @@
     // Check existing status
     async function checkStatus() {
       try {
-        const res = await fetch(`${API_BASE}/business/approved/${user.id}`);
+        const res = await fetch(`${API_BASE}/businesses?ownerId=${user.id}`);
         const data = await res.json();
+        const businesses = data.businesses || [];
         const container = document.getElementById("status-container");
         
-        if (data.hasApprovedBusiness) {
-            container.innerHTML = `<div class="status-message approved">
-                <strong>Business Registered!</strong><br>
-                Your business "${data.business.businessName}" is approved and active.
-            </div>`;
-        } else if (data.business && data.business.status === "PENDING") {
-             container.innerHTML = `<div class="status-message pending">
-                <strong>Application Pending</strong><br>
-                Your application for "${data.business.businessName}" is currently under review.
-            </div>`;
-        } else if (data.business && data.business.status === "REJECTED") {
-             container.innerHTML = `<div class="status-message rejected">
-                <strong>Application Rejected</strong><br>
-                Please review your details and try again.
-            </div>`;
+        if (businesses.length > 0) {
+            let html = '<div class="status-message approved"><strong>Your Registered Businesses:</strong><ul style="margin-top:5px;padding-left:20px;">';
+            businesses.forEach(b => {
+                let statusIcon = b.status === 'APPROVED' ? '✅' : (b.status === 'REJECTED' ? '❌' : '⏳');
+                html += `<li>${statusIcon} <strong>${b.businessName}</strong> (${b.status})</li>`;
+            });
+            html += '</ul><div style="margin-top:10px;font-size:0.9em;">You can register another business below.</div></div>';
+            container.innerHTML = html;
         }
       } catch (err) {
         console.error(err);
