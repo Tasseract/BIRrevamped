@@ -69,8 +69,8 @@
     </div>
   </nav>
 
-  <main class="auth-container">
-    <section class="auth-box" style="max-width: 800px;">
+  <main class="auth-container business-reg-wrapper">
+    <section class="auth-box business-reg-box">
       <h1>Register Business</h1>
       <p class="muted" style="margin-bottom: 24px;">Complete your business registration to access BIR tools and services.</p>
 
@@ -90,7 +90,7 @@
         <!-- Common Fields -->
         <div class="section-title">Business Information</div>
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-grid-row">
             <div class="input-group">
                 <label for="businessName">Business Name / Trade Name *</label>
                 <input type="text" id="businessName" name="businessName" placeholder="Enter registered business name" required>
@@ -112,7 +112,7 @@
             <input type="text" id="businessAddress" name="businessAddress" placeholder="Enter complete business address" required>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-grid-row">
             <div class="input-group">
                 <label for="businessEmail">Business Email Address *</label>
                 <input type="email" id="businessEmail" name="businessEmail" placeholder="email@business.com" required>
@@ -126,7 +126,7 @@
         <!-- Individual Specific Fields -->
         <div id="individual-fields">
             <div class="section-title">Owner Information</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-grid-row">
                 <div class="input-group">
                     <label for="ownerName">Owner's Full Name *</label>
                     <input type="text" id="ownerName" name="ownerName" placeholder="Last Name, First Name, MI">
@@ -136,7 +136,7 @@
                     <input type="text" id="ownerTin" name="ownerTin" placeholder="Enter Owner TIN">
                 </div>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+            <div class="form-grid-row-3">
                 <div class="input-group">
                     <label for="dateOfBirth">Date of Birth</label>
                     <input type="date" id="dateOfBirth" name="dateOfBirth">
@@ -161,7 +161,7 @@
         <!-- Non-Individual Specific Fields -->
         <div id="non-individual-fields" class="hidden">
             <div class="section-title">Organization Details</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-grid-row">
                 <div class="input-group">
                     <label for="organizationType">Organization Type *</label>
                     <select id="organizationType" name="organizationType">
@@ -177,7 +177,7 @@
                     <input type="text" id="secRegNum" name="secRegNum" placeholder="Enter Registration Number">
                 </div>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-grid-row">
                 <div class="input-group">
                     <label for="dateOfRegistration">Date of Registration</label>
                     <input type="date" id="dateOfRegistration" name="dateOfRegistration">

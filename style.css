@@ -1195,3 +1195,35 @@ select option {
     }
 }
 
+
+/* Business Registration Specifics */
+.form-grid-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-grid-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+}
+
+/* Mobile horizontal scroll for business registration */
+@media (max-width: 768px) {
+    .business-reg-wrapper {
+        display: block; /* Override flex centering */
+        overflow-x: auto; /* Allow horizontal scroll */
+        padding: 2rem 1rem;
+        align-items: flex-start;
+        justify-content: flex-start;
+        -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+    }
+
+    .business-reg-box {
+        min-width: 700px; /* Force wide width to prevent wrapping */
+        margin: 0 auto; /* Center if viewport is large enough, otherwise scroll */
+        max-width: none !important; /* Override the inline max-width */
+    }
+}
+
