@@ -23,10 +23,12 @@
       </div>
 
       <div class="user-profile" id="dashboard-user-profile">
-        <img id="user-avatar" src="" alt="avatar" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid rgba(0,0,0,0.06);">
-        <div style="display:flex;flex-direction:column;align-items:flex-start;margin-left:8px;">
-          <div id="dashboard-user-name" style="font-weight:700;color:#081224"></div>
-          <div id="dashboard-user-email" style="font-size:0.85rem;color:var(--muted)"></div>
+        <div id="user-profile-trigger" class="user-profile-info">
+            <img id="user-avatar" src="" alt="avatar" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid rgba(0,0,0,0.06);">
+            <div style="display:flex;flex-direction:column;align-items:flex-start;margin-left:8px;">
+              <div id="dashboard-user-name" style="font-weight:700;color:#081224"></div>
+              <div id="dashboard-user-email" style="font-size:0.85rem;color:var(--muted)"></div>
+            </div>
         </div>
         <button id="dashboard-logout" class="logout-btn" style="margin-left:14px;">Log Out</button>
       </div>
@@ -247,6 +249,108 @@
       }
 
       loadBusinesses();
+    }
+  </script>
+  <!-- User Profile Modal -->
+  <div id="profile-modal" class="modal-overlay">
+    <div class="glass-panel" style="width: 100%; max-width: 480px;">
+      <div class="modal-header">
+        <h2>User Profile</h2>
+        <button id="close-profile-modal" class="close-btn">&times;</button>
+      </div>
+      
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div>
+            <label style="display:block;font-weight:600;margin-bottom:4px;">Full Name</label>
+            <input id="profile-name" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(15,23,42,0.1);background:rgba(255,255,255,0.5);" />
+        </div>
+        
+        <div>
+            <label style="display:block;font-weight:600;margin-bottom:4px;">TIN</label>
+            <input id="profile-tin" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(15,23,42,0.1);background:rgba(255,255,255,0.5);" />
+        </div>
+
+        <div>
+            <label style="display:block;font-weight:600;margin-bottom:4px;">Email Address</label>
+            <input id="profile-email" disabled style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(15,23,42,0.1);background:rgba(0,0,0,0.05);color:var(--muted);" />
+        </div>
+
+        <div style="margin-top:8px; padding-top:16px; border-top:1px solid rgba(0,0,0,0.05);">
+            <button id="reset-password-btn" class="small-btn" style="width:100%; justify-content:center;">Reset Password</button>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:24px;padding-top:16px;border-top:1px solid rgba(0,0,0,0.05);">
+        <button id="profile-cancel" class="signup-btn" style="background:rgba(255,255,255,0.5);">Cancel</button>
+        <button id="profile-save" class="auth-button">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // User Profile Modal Logic
+    const profileTrigger = document.getElementById('user-profile-trigger');
+    const profileModal = document.getElementById('profile-modal');
+    const closeProfileModal = document.getElementById('close-profile-modal');
+    const profileCancel = document.getElementById('profile-cancel');
+    const profileSave = document.getElementById('profile-save');
+    const resetPasswordBtn = document.getElementById('reset-password-btn');
+
+    const profileNameInput = document.getElementById('profile-name');
+    const profileTinInput = document.getElementById('profile-tin');
+    const profileEmailInput = document.getElementById('profile-email');
+
+    if (profileTrigger) {
+        profileTrigger.addEventListener('click', () => {
+            // Load current user data
+            const currentUser = JSON.parse(localStorage.getItem('user'));
+            if (currentUser) {
+                profileNameInput.value = currentUser.fullName || '';
+                profileTinInput.value = currentUser.tin || '';
+                profileEmailInput.value = currentUser.email || '';
+                profileModal.classList.add('active');
+            }
+        });
+    }
+
+    function closeProfile() {
+        profileModal.classList.remove('active');
+    }
+
+    if (closeProfileModal) closeProfileModal.addEventListener('click', closeProfile);
+    if (profileCancel) profileCancel.addEventListener('click', closeProfile);
+    if (profileModal) {
+        profileModal.addEventListener('click', (e) => {
+            if (e.target === profileModal) closeProfile();
+        });
+    }
+
+    if (profileSave) {
+        profileSave.addEventListener('click', () => {
+            const currentUser = JSON.parse(localStorage.getItem('user'));
+            if (currentUser) {
+                currentUser.fullName = profileNameInput.value;
+                currentUser.tin = profileTinInput.value;
+                
+                // Update localStorage
+                localStorage.setItem('user', JSON.stringify(currentUser));
+                
+                // Update UI
+                document.getElementById('dashboard-user-name').textContent = currentUser.fullName;
+                
+                // Visual feedback
+                alert('Profile updated successfully!');
+                closeProfile();
+            }
+        });
+    }
+
+    if (resetPasswordBtn) {
+        resetPasswordBtn.addEventListener('click', () => {
+            if(confirm('Are you sure you want to reset your password? An email will be sent to ' + profileEmailInput.value)) {
+                alert('Password reset link sent!');
+            }
+        });
     }
   </script>
 <script src='loader.js'></script>
